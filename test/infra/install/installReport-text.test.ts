@@ -56,7 +56,7 @@ describe('InstallReportText.failure', () => {
     [ErrorCode.VERSION_MISMATCH, 'O yt-dlp instalado respondeu outra versão.'],
     [ErrorCode.UNEXPECTED, 'Erro inesperado no instalador.'],
   ])('%s', (code: ErrorCode, message: string) => {
-    const text: string = InstallReportText.failure(new Result<unknown>(undefined, [code], 'o detalhe'));
+    const text: string = InstallReportText.failure(Result.failWithCause<unknown>(code, 'o detalhe'));
     expect(text).toBe(`Instalação NÃO concluída: ${message}\nDetalhe: o detalhe\n`);
   });
 
@@ -67,13 +67,13 @@ describe('InstallReportText.failure', () => {
 
   test('a cause with "message" (an exception): shows the message', () => {
     const text: string = InstallReportText.failure(
-      new Result<unknown>(undefined, [ErrorCode.FILE_WRITE_FAILED], { message: 'EPERM: operation not permitted' }),
+      Result.failWithCause<unknown>(ErrorCode.FILE_WRITE_FAILED, { message: 'EPERM: operation not permitted' }),
     );
     expect(text).toContain('\nDetalhe: EPERM: operation not permitted\n');
   });
 
   test('a cause of another kind: shown as text', () => {
-    const text: string = InstallReportText.failure(new Result<unknown>(undefined, [ErrorCode.DOWNLOAD_FAILED], 42));
+    const text: string = InstallReportText.failure(Result.failWithCause<unknown>(ErrorCode.DOWNLOAD_FAILED, 42));
     expect(text).toContain('\nDetalhe: 42\n');
   });
 });

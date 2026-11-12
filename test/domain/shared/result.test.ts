@@ -100,12 +100,48 @@ describe('throwIfFailed', () => {
   });
 });
 
-describe('withFail', () => {
-  test('creates a new failure with the same errors, to return in another type', () => {
+describe('Result.failWithCause: a failure that keeps what caused it, for the log', () => {
+  test('keeps the code and the cause', () => {
+    const cause: Error = new Error('EACCES: permissão negada');
+    const result: Result<string> = Result.failWithCause<string>(ErrorCode.FILE_WRITE_FAILED, cause);
+    expect(result.isFailure).toBe(true);
+    expect(result.errors).toEqual([ErrorCode.FILE_WRITE_FAILED]);
+    expect(result.cause).toBe(cause);
+    expect(result.details).toBeUndefined();
+  });
+
+  test('the cause may be a text, and details may come too', () => {
+    const details: ErrorDetails = { available: { manual: ['en'], automatic: [] } };
+    const result: Result<string> = Result.failWithCause<string>(ErrorCode.NO_CAPTIONS_FOR_LANGUAGE, 'motivo em texto', details);
+    expect(result.cause).toBe('motivo em texto');
+    expect(result.details).toEqual(details);
+  });
+});
+
+describe('propagate: the same failure, returned as a Result of another type', () => {
+  test('keeps every code, in order', () => {
     const original: Result<number> = Result.fail<number>([ErrorCode.INVALID_URL, ErrorCode.INVALID_LANGUAGE]);
-    const forwarded: Result<string> = original.withFail;
+    const forwarded: Result<string> = original.propagate<string>();
     expect(forwarded.isFailure).toBe(true);
     expect(forwarded.errors).toEqual([ErrorCode.INVALID_URL, ErrorCode.INVALID_LANGUAGE]);
+  });
+
+  test('keeps the details and the cause together (nothing is lost on the way up)', () => {
+    const details: ErrorDetails = { available: { manual: ['en'], automatic: ['en-orig'] } };
+    const cause: Error = new Error('saída inesperada');
+    const original: Result<number> = Result.failWithCause<number>(ErrorCode.NO_CAPTIONS_FOR_LANGUAGE, cause, details);
+    const forwarded: Result<string> = original.propagate<string>();
+    expect(forwarded.details).toEqual(details);
+    expect(forwarded.cause).toBe(cause);
+  });
+
+  test('keeps the cause of an exception caught by Result.try', async () => {
+    const cause: Error = new Error('caiu');
+    const caught: Result<number> = await Result.try<number>(async () => {
+      throw cause;
+    });
+    expect(caught.propagate<string>().cause).toBe(cause);
+    expect(caught.propagate<string>().errors).toEqual([ErrorCode.UNEXPECTED]);
   });
 });
 
@@ -176,10 +212,5 @@ describe('details: extra data carried with the error code', () => {
     const original: Result<number> = Result.fail<number>(ErrorCode.NO_CAPTIONS_FOR_LANGUAGE, details);
     const forwarded: Result<string> = Result.fail<string>(original.errors!, original.details);
     expect(forwarded.details).toEqual(details);
-  });
-
-  test('withFail keeps the details', () => {
-    const original: Result<number> = Result.fail<number>(ErrorCode.NO_CAPTIONS_FOR_LANGUAGE, details);
-    expect(original.withFail.details).toEqual(details);
   });
 });

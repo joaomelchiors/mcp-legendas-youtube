@@ -40,27 +40,27 @@ export class YtDlpInstaller {
 
   async install(version: string): Promise<Result<InstallReport>> {
     const assetReturn: Result<string> = YtDlpRelease.assetFor(this.platform, this.arch);
-    if (assetReturn.isFailure) return YtDlpInstaller.failure<InstallReport>(assetReturn);
+    if (assetReturn.isFailure) return assetReturn.propagate<InstallReport>();
 
     const expectedReturn: Result<string> = await this.expectedChecksum(version, assetReturn.instance);
-    if (expectedReturn.isFailure) return YtDlpInstaller.failure<InstallReport>(expectedReturn);
+    if (expectedReturn.isFailure) return expectedReturn.propagate<InstallReport>();
 
     const path: string = join(this.folder, YtDlpRelease.installedName(this.platform));
     const isInstalled: boolean = await YtDlpInstaller.hasChecksum(path, expectedReturn.instance);
     if (!isInstalled) {
       const savedReturn: Result<string> = await this.downloadAndSave(version, assetReturn.instance, path, expectedReturn.instance);
-      if (savedReturn.isFailure) return YtDlpInstaller.failure<InstallReport>(savedReturn);
+      if (savedReturn.isFailure) return savedReturn.propagate<InstallReport>();
     }
 
     const confirmedReturn: Result<string> = await this.confirmVersion(path, version);
-    if (confirmedReturn.isFailure) return YtDlpInstaller.failure<InstallReport>(confirmedReturn);
+    if (confirmedReturn.isFailure) return confirmedReturn.propagate<InstallReport>();
     return Result.ok<InstallReport>({ path, version, downloaded: !isInstalled });
   }
 
   /** Downloads the official list of the version and returns the checksum of the asset in it. */
   private async expectedChecksum(version: string, asset: string): Promise<Result<string>> {
     const sumsReturn: Result<Buffer> = await this.downloader.download(YtDlpRelease.url(version, YtDlpRelease.SUMS_FILE));
-    if (sumsReturn.isFailure) return YtDlpInstaller.failure<string>(sumsReturn);
+    if (sumsReturn.isFailure) return sumsReturn.propagate<string>();
     return Sha256Sums.expectedFor(sumsReturn.instance.toString('utf-8'), asset);
   }
 
@@ -75,12 +75,12 @@ export class YtDlpInstaller {
 
   private async downloadAndSave(version: string, asset: string, path: string, expected: string): Promise<Result<string>> {
     const fileReturn: Result<Buffer> = await this.downloader.download(YtDlpRelease.url(version, asset));
-    if (fileReturn.isFailure) return YtDlpInstaller.failure<string>(fileReturn);
+    if (fileReturn.isFailure) return fileReturn.propagate<string>();
 
     const downloaded: string = Sha256Sums.of(fileReturn.instance);
     const isOfficial: boolean = downloaded === expected;
     if (!isOfficial) {
-      return new Result<string>(undefined, [ErrorCode.CHECKSUM_MISMATCH], `esperado ${expected}, baixado ${downloaded}`);
+      return Result.failWithCause<string>(ErrorCode.CHECKSUM_MISMATCH, `esperado ${expected}, baixado ${downloaded}`);
     }
     return this.save(path, fileReturn.instance);
   }
@@ -96,7 +96,7 @@ export class YtDlpInstaller {
       return Result.ok<string>(path);
     } catch (error: unknown) {
       await YtDlpInstaller.discard(temporary);
-      return new Result<string>(undefined, [ErrorCode.FILE_WRITE_FAILED], error);
+      return Result.failWithCause<string>(ErrorCode.FILE_WRITE_FAILED, error);
     }
   }
 
@@ -112,16 +112,11 @@ export class YtDlpInstaller {
   private async confirmVersion(path: string, version: string): Promise<Result<string>> {
     const run: CommandResult = await this.runner.run(path, YtDlpArgumentsBuilder.version(), YtDlpInstaller.VERSION_TIMEOUT_MS);
     const hasRun: boolean = run.exitCode === 0;
-    if (!hasRun) return new Result<string>(undefined, [ErrorCode.ENGINE_FAILED], run.stderr.trim());
+    if (!hasRun) return Result.failWithCause<string>(ErrorCode.ENGINE_FAILED, run.stderr.trim());
 
     const answered: string = run.stdout.trim();
     const isFixedVersion: boolean = answered === version;
-    if (!isFixedVersion) return new Result<string>(undefined, [ErrorCode.VERSION_MISMATCH], `esperada ${version}, respondeu ${answered}`);
+    if (!isFixedVersion) return Result.failWithCause<string>(ErrorCode.VERSION_MISMATCH, `esperada ${version}, respondeu ${answered}`);
     return Result.ok<string>(answered);
-  }
-
-  /** The same failure (codes and cause) as a Result of another type. */
-  private static failure<T>(failed: Result<unknown>): Result<T> {
-    return new Result<T>(undefined, failed.errors, failed.cause);
   }
 }

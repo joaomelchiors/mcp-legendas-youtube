@@ -33,13 +33,13 @@ export class YtDlpEngine implements TranscriptEngine {
   /** The yt-dlp version. Only the canary uses it, so it is not part of the port. */
   async version(): Promise<Result<string>> {
     const runReturn: Result<CommandResult> = await this.execute(YtDlpArgumentsBuilder.version());
-    if (runReturn.isFailure) return Result.fail<string>(runReturn.errors!);
+    if (runReturn.isFailure) return runReturn.propagate<string>();
     return Result.ok<string>(runReturn.instance.stdout.trim());
   }
 
   async getVideoInfo(video: UrlVideo): Promise<Result<VideoInfo>> {
     const runReturn: Result<CommandResult> = await this.execute(YtDlpArgumentsBuilder.videoInfo(video));
-    if (runReturn.isFailure) return Result.fail<VideoInfo>(runReturn.errors!);
+    if (runReturn.isFailure) return runReturn.propagate<VideoInfo>();
     return VideoInfoParser.parse(runReturn.instance.stdout);
   }
 
@@ -54,10 +54,10 @@ export class YtDlpEngine implements TranscriptEngine {
 
   private async downloadInto(folder: string, video: UrlVideo, track: Track): Promise<Result<TranscriptSegment[]>> {
     const argsReturn: Result<string[]> = YtDlpArgumentsBuilder.download(video, track, join(folder, YtDlpEngine.OUTPUT_NAME));
-    if (argsReturn.isFailure) return Result.fail<TranscriptSegment[]>(argsReturn.errors!);
+    if (argsReturn.isFailure) return argsReturn.propagate<TranscriptSegment[]>();
 
     const runReturn: Result<CommandResult> = await this.execute(argsReturn.instance);
-    if (runReturn.isFailure) return Result.fail<TranscriptSegment[]>(runReturn.errors!);
+    if (runReturn.isFailure) return runReturn.propagate<TranscriptSegment[]>();
 
     const captionFile: string | null = await YtDlpEngine.captionFile(folder);
     if (captionFile === null) return YtDlpEngine.noFileWritten(runReturn.instance);
@@ -66,7 +66,7 @@ export class YtDlpEngine implements TranscriptEngine {
 
   /** Runs yt-dlp; any way of not ending well becomes the matching error code. */
   private async execute(args: string[]): Promise<Result<CommandResult>> {
-    if (this.executable.isFailure) return Result.fail<CommandResult>(this.executable.errors!);
+    if (this.executable.isFailure) return this.executable.propagate<CommandResult>();
 
     const result: CommandResult = await this.runner.run(this.executable.instance, args, this.timeoutMs);
     if (result.notFound) return YtDlpEngine.failed(ErrorCode.ENGINE_NOT_FOUND, 'yt-dlp não encontrado');

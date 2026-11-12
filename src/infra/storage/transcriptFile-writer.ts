@@ -27,7 +27,7 @@ export class TranscriptFileWriter {
   /** Writes the file and returns its full path. */
   async save(fileName: string, content: string): Promise<Result<string>> {
     if (!TranscriptFileWriter.isPlainName(fileName)) {
-      return new Result<string>(undefined, [ErrorCode.FILE_WRITE_FAILED], `nome de arquivo recusado: ${JSON.stringify(fileName)}`);
+      return Result.failWithCause<string>(ErrorCode.FILE_WRITE_FAILED, `nome de arquivo recusado: ${JSON.stringify(fileName)}`);
     }
     const path: string = join(this.folder, fileName);
     try {
@@ -35,7 +35,7 @@ export class TranscriptFileWriter {
       await writeFile(path, content, 'utf-8');
       return Result.ok<string>(path);
     } catch (error: unknown) {
-      return new Result<string>(undefined, [ErrorCode.FILE_WRITE_FAILED], error);
+      return Result.failWithCause<string>(ErrorCode.FILE_WRITE_FAILED, error);
     }
   }
 

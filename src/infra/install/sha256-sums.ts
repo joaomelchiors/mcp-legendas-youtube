@@ -15,7 +15,7 @@ export class Sha256Sums {
       const isThisFile: boolean = match !== null && match[2] === fileName;
       if (isThisFile) return Result.ok<string>(match![1]!.toLowerCase());
     }
-    return new Result<string>(undefined, [ErrorCode.CHECKSUM_NOT_LISTED], fileName);
+    return Result.failWithCause<string>(ErrorCode.CHECKSUM_NOT_LISTED, fileName);
   }
 
   /** SHA-256 of the content, in lowercase hexadecimal (the format of the list). */

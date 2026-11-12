@@ -21,8 +21,13 @@ export class Result<InstanceType> {
   }
 
   static fail<InstanceType>(e: ResultError | ResultError[], details?: ErrorDetails): Result<InstanceType> {
+    return Result.failWithCause<InstanceType>(e, undefined, details);
+  }
+
+  /** A failure that keeps what caused it (an exception, or a text), for the log. */
+  static failWithCause<InstanceType>(e: ResultError | ResultError[], cause: unknown, details?: ErrorDetails): Result<InstanceType> {
     const errors: ResultError[] = Array.isArray(e) ? e : [e];
-    return new Result<InstanceType>(undefined, errors, undefined, details);
+    return new Result<InstanceType>(undefined, errors, cause, details);
   }
 
   /** Runs an async step; an exception becomes UNEXPECTED (the exception goes to `cause`). */
@@ -30,7 +35,7 @@ export class Result<InstanceType> {
     try {
       return await fn();
     } catch (e: unknown) {
-      return new Result<InstanceType>(undefined, [ErrorCode.UNEXPECTED], e);
+      return Result.failWithCause<InstanceType>(ErrorCode.UNEXPECTED, e);
     }
   }
 
@@ -39,7 +44,7 @@ export class Result<InstanceType> {
     try {
       return Result.ok<InstanceType>(fn());
     } catch (e: unknown) {
-      return new Result<InstanceType>(undefined, [ErrorCode.UNEXPECTED], e);
+      return Result.failWithCause<InstanceType>(ErrorCode.UNEXPECTED, e);
     }
   }
 
@@ -80,8 +85,12 @@ export class Result<InstanceType> {
     return !!this.errors;
   }
 
-  get withFail(): Result<any> {
-    return Result.fail<any>(this.errors!, this._details);
+  /**
+   * The same failure as a Result of another type, to return it one level up.
+   * Keeps everything: the codes, the details and the cause. Only meaningful on a failure: check isFailure first.
+   */
+  propagate<OtherType>(): Result<OtherType> {
+    return new Result<OtherType>(undefined, this.errors, this._cause, this._details);
   }
 
   static combine<const R extends readonly Result<any>[]>(

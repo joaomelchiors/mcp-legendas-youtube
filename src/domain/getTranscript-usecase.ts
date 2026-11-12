@@ -32,16 +32,16 @@ export class GetTranscript {
 
   async execute(url: unknown, language: unknown): Promise<Result<Transcript>> {
     const urlVideoReturn: Result<UrlVideo> = UrlVideo.tryCreate(url);
-    if (urlVideoReturn.isFailure) return Result.fail<Transcript>(urlVideoReturn.errors!, urlVideoReturn.details);
+    if (urlVideoReturn.isFailure) return urlVideoReturn.propagate<Transcript>();
 
     const languageReturn: Result<Language> = Language.tryCreate(language);
-    if (languageReturn.isFailure) return Result.fail<Transcript>(languageReturn.errors!, languageReturn.details);
+    if (languageReturn.isFailure) return languageReturn.propagate<Transcript>();
 
     const videoInfoReturn: Result<VideoInfo> = await this.engine.getVideoInfo(urlVideoReturn.instance);
-    if (videoInfoReturn.isFailure) return Result.fail<Transcript>(videoInfoReturn.errors!, videoInfoReturn.details);
+    if (videoInfoReturn.isFailure) return videoInfoReturn.propagate<Transcript>();
 
     const planReturn: Result<TrackPlan> = TrackSelection.select(videoInfoReturn.instance, languageReturn.instance);
-    if (planReturn.isFailure) return Result.fail<Transcript>(planReturn.errors!, planReturn.details);
+    if (planReturn.isFailure) return planReturn.propagate<Transcript>();
 
     return this.download(urlVideoReturn.instance, videoInfoReturn.instance, planReturn.instance);
   }
@@ -52,10 +52,10 @@ export class GetTranscript {
     if (preferredReturn.isOk) {
       return Result.ok<Transcript>(this.transcript(video, info, plan.preferred, preferredReturn.instance, false));
     }
-    if (plan.fallback === null) return Result.fail<Transcript>(preferredReturn.errors!, preferredReturn.details);
+    if (plan.fallback === null) return preferredReturn.propagate<Transcript>();
 
     const fallbackReturn: Result<TranscriptSegment[]> = await this.engine.downloadTrack(video, plan.fallback);
-    if (fallbackReturn.isFailure) return Result.fail<Transcript>(fallbackReturn.errors!, fallbackReturn.details);
+    if (fallbackReturn.isFailure) return fallbackReturn.propagate<Transcript>();
     return Result.ok<Transcript>(this.transcript(video, info, plan.fallback, fallbackReturn.instance, true));
   }
 

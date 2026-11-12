@@ -15,10 +15,10 @@ export class FetchDownloader implements Downloader {
   async download(url: string): Promise<Result<Buffer>> {
     try {
       const response: Response = await fetch(url, { signal: AbortSignal.timeout(this.timeoutMs) });
-      if (!response.ok) return new Result<Buffer>(undefined, [ErrorCode.DOWNLOAD_FAILED], `HTTP ${response.status} em ${url}`);
+      if (!response.ok) return Result.failWithCause<Buffer>(ErrorCode.DOWNLOAD_FAILED, `HTTP ${response.status} em ${url}`);
       return Result.ok<Buffer>(Buffer.from(await response.arrayBuffer()));
     } catch (error: unknown) {
-      return new Result<Buffer>(undefined, [ErrorCode.DOWNLOAD_FAILED], error);
+      return Result.failWithCause<Buffer>(ErrorCode.DOWNLOAD_FAILED, error);
     }
   }
 }

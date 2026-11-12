@@ -24,7 +24,7 @@ export class YtDlpRelease {
   static assetFor(platform: NodeJS.Platform, arch: string): Result<string> {
     const system: string = `${platform} ${arch}`;
     const asset: string | undefined = YtDlpRelease.ASSETS[system];
-    if (asset === undefined) return new Result<string>(undefined, [ErrorCode.UNSUPPORTED_SYSTEM], system);
+    if (asset === undefined) return Result.failWithCause<string>(ErrorCode.UNSUPPORTED_SYSTEM, system);
     return Result.ok<string>(asset);
   }
 

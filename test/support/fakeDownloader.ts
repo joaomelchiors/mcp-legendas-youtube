@@ -14,7 +14,7 @@ export class FakeDownloader implements Downloader {
   async download(url: string): Promise<Result<Buffer>> {
     this.requested.push(url);
     const content: Buffer | undefined = this.files[url];
-    if (content === undefined) return new Result<Buffer>(undefined, [ErrorCode.DOWNLOAD_FAILED], `sem rede: ${url}`);
+    if (content === undefined) return Result.failWithCause<Buffer>(ErrorCode.DOWNLOAD_FAILED, `sem rede: ${url}`);
     return Result.ok<Buffer>(content);
   }
 }
