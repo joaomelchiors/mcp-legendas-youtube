@@ -18,6 +18,8 @@ import { VttReader } from './vtt-reader.js';
 import { Log } from '../log.js';
 
 export class YtDlpEngine implements TranscriptEngine {
+  /** Time limit for each yt-dlp run, used by the MCP and the canary. The consultations in the engine tests took a few seconds. */
+  static readonly TIMEOUT_MS: number = 90_000;
   private static readonly TEMP_PREFIX: string = 'mcp-legendas-';
   private static readonly OUTPUT_NAME: string = 'legenda.%(ext)s';
   private static readonly CAPTION_EXTENSION: string = '.vtt';

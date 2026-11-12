@@ -5,6 +5,7 @@ import type { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
 import type { InstallReport } from './ytDlp-installer.js';
 import type { RegistrationCommands } from './registration-command.js';
+import { ErrorText } from '../error-text.js';
 
 export class InstallReportText {
   private static readonly UNEXPECTED: string = 'Erro inesperado no instalador.';
@@ -46,13 +47,7 @@ export class InstallReportText {
     const known: string | undefined = InstallReportText.MESSAGES[code];
     const message: string = known ?? `${InstallReportText.UNEXPECTED} (${code})`;
     const hasCause: boolean = failed.cause !== undefined;
-    const detail: string = hasCause ? `Detalhe: ${InstallReportText.describe(failed.cause)}\n` : '';
+    const detail: string = hasCause ? `Detalhe: ${ErrorText.of(failed.cause)}\n` : '';
     return `Instalação NÃO concluída: ${message}\n${detail}`;
-  }
-
-  /** The message of an exception (checked by shape: errors from Node may come from another Error class), or the text. */
-  private static describe(cause: unknown): string {
-    const hasMessage: boolean = typeof cause === 'object' && cause !== null && typeof (cause as { message?: unknown }).message === 'string';
-    return hasMessage ? (cause as { message: string }).message : String(cause);
   }
 }

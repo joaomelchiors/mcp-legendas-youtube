@@ -14,9 +14,8 @@ import { GetTranscriptTool } from './infra/mcp/getTranscript-tool.js';
 import { McpServerFactory } from './infra/mcp/mcp-server.js';
 import { TranscriptFileWriter } from './infra/storage/transcriptFile-writer.js';
 import { Log } from './infra/log.js';
-
-/** Time limit for each yt-dlp run. The consultations in the engine tests took a few seconds. */
-const ENGINE_TIMEOUT_MS: number = 90_000;
+import { ErrorText } from './infra/error-text.js';
+import { Project } from './infra/project.js';
 
 async function start(): Promise<void> {
   const executable: Result<string> = YtDlpExecutableLocator.locate(process.env);
@@ -25,14 +24,14 @@ async function start(): Promise<void> {
   const writer: TranscriptFileWriter = new TranscriptFileWriter(TranscriptFileWriter.folderFrom(process.env));
   Log.write(`legendas: ${writer.folder}`);
 
-  const engine: TranscriptEngine = new YtDlpEngine(new NodeCommandRunner(), executable, ENGINE_TIMEOUT_MS);
+  const engine: TranscriptEngine = new YtDlpEngine(new NodeCommandRunner(), executable, YtDlpEngine.TIMEOUT_MS);
   const tool: GetTranscriptTool = new GetTranscriptTool(new GetTranscript(engine), writer);
   const server: Server = McpServerFactory.create(tool);
   await server.connect(new StdioServerTransport());
-  Log.write(`versão ${McpServerFactory.VERSION} iniciada (stdio)`);
+  Log.write(`versão ${Project.VERSION} iniciada (stdio)`);
 }
 
 start().catch((error: unknown) => {
-  Log.write(`falha ao iniciar: ${error instanceof Error ? error.message : String(error)}`);
+  Log.write(`falha ao iniciar: ${ErrorText.of(error)}`);
   process.exit(1);
 });

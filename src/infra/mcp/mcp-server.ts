@@ -5,14 +5,12 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { CallToolRequestSchema, ListToolsRequestSchema, type CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { GetTranscriptTool } from './getTranscript-tool.js';
+import { Project } from '../project.js';
 
 export class McpServerFactory {
-  static readonly NAME: string = 'mcp-legendas-youtube';
-  static readonly VERSION: string = '0.1.0';
-
   static create(tool: GetTranscriptTool): Server {
     const server: Server = new Server(
-      { name: McpServerFactory.NAME, version: McpServerFactory.VERSION },
+      { name: Project.NAME, version: Project.VERSION },
       { capabilities: { tools: {} } },
     );
 

@@ -4,7 +4,7 @@
 // VideoInfo: what the engine tells about the video's captions.
 // A value object never throws for bad input: tryCreate returns Result.fail(code).
 
-import { Language, UrlVideo, VideoInfo } from '../../src/domain/generics-vo.js';
+import { Language, TrackName, UrlVideo, VideoInfo } from '../../src/domain/generics-vo.js';
 import { Result } from '../../src/domain/shared/result.js';
 import { ErrorCode } from '../../src/domain/shared/errorCode.js';
 
@@ -85,6 +85,20 @@ function expectInvalidUrl(input: unknown): void {
   expect(urlVideoReturn!.isFailure).toBe(true);
   expect(urlVideoReturn!.errors).toEqual([ErrorCode.INVALID_URL]);
 }
+
+describe('UrlVideo.watchUrl: the one canonical link of the video', () => {
+  test.each([
+    ['from the plain ID', ID],
+    ['from a short link with extra parameters', `https://youtu.be/${ID}?si=abc&t=42`],
+    ['from a playlist link', `https://www.youtube.com/watch?v=${ID}&list=PLE-wFs0H2h9E&index=3`],
+  ])('%s', (_case: string, input: string) => {
+    expect(UrlVideo.tryCreate(input).instance.watchUrl).toBe(`https://www.youtube.com/watch?v=${ID}`);
+  });
+
+  test('watchUrlOf gives the same link for an ID kept as text (e.g. the videoId of a Transcript)', () => {
+    expect(UrlVideo.watchUrlOf(ID)).toBe(`https://www.youtube.com/watch?v=${ID}`);
+  });
+});
 
 // ---------------------------------------------------------------------------
 // Language
@@ -223,5 +237,30 @@ describe('VideoInfo', () => {
 
   test('available gives both lists, to be offered to the user', () => {
     expect(ted.available).toEqual({ manual: ['en', 'pt-BR'], automatic: ['en-orig', 'pt'] });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// TrackName
+// YouTube names the automatic transcription of the audio "<language>-orig" ("en-orig", "pt-BR-orig").
+// The other automatic names ("pt", "es") are machine translations.
+// ---------------------------------------------------------------------------
+
+describe('TrackName', () => {
+  test.each([
+    ['en-orig', true],
+    ['pt-BR-orig', true],
+    ['en', false],
+    ['pt-BR', false],
+    ['orig', false],
+  ])('isOriginal("%s") is %s', (name: string, expected: boolean) => {
+    expect(TrackName.isOriginal(name)).toBe(expected);
+  });
+
+  test.each([
+    ['pt', 'pt-orig'],
+    ['pt-BR', 'pt-BR-orig'],
+  ])('originalOf("%s") is "%s"', (language: string, expected: string) => {
+    expect(TrackName.originalOf(language)).toBe(expected);
   });
 });

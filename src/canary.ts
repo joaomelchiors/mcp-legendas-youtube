@@ -10,16 +10,15 @@ import { YtDlpEngine } from './infra/engine/ytDlp-engine.js';
 import { YtDlpExecutableLocator } from './infra/engine/ytDlpExecutable-locator.js';
 import { Canary, type CanaryReport } from './infra/canary/canary.js';
 import { CanaryReportText } from './infra/canary/canaryReport-text.js';
+import { ErrorText } from './infra/error-text.js';
 import { TranscriptFileWriter } from './infra/storage/transcriptFile-writer.js';
 
-/** Same time limit as the MCP. */
-const ENGINE_TIMEOUT_MS: number = 90_000;
 const SUMMARY_FOLDER: string = 'canario';
 const SUMMARY_FILE: string = 'ultima-execucao.json';
 
 async function start(): Promise<void> {
   const executable: Result<string> = YtDlpExecutableLocator.locate(process.env);
-  const engine: YtDlpEngine = new YtDlpEngine(new NodeCommandRunner(), executable, ENGINE_TIMEOUT_MS);
+  const engine: YtDlpEngine = new YtDlpEngine(new NodeCommandRunner(), executable, YtDlpEngine.TIMEOUT_MS);
 
   const report: CanaryReport = await new Canary(engine).run();
   process.stdout.write(CanaryReportText.format(report));
@@ -32,6 +31,6 @@ async function start(): Promise<void> {
 }
 
 start().catch((error: unknown) => {
-  process.stdout.write(`Canário parou com erro inesperado: ${error instanceof Error ? error.message : String(error)}\n`);
+  process.stdout.write(`Canário parou com erro inesperado: ${ErrorText.of(error)}\n`);
   process.exitCode = 1;
 });

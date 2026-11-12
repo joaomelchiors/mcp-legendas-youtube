@@ -13,6 +13,7 @@ import { TranscriptMarkdown } from './transcript-markdown.js';
 import { TranscriptFileName } from '../storage/transcriptFile-name.js';
 import type { TranscriptFileWriter } from '../storage/transcriptFile-writer.js';
 import { Log } from '../log.js';
+import { ErrorText } from '../error-text.js';
 
 export class GetTranscriptTool {
   static readonly definition: Tool = {
@@ -68,13 +69,13 @@ ${ResponsePresenter.success(transcript)}`;
   private async save(transcript: Transcript): Promise<Result<string>> {
     const savedReturn: Result<string> = await this.writer.save(TranscriptFileName.for(transcript), TranscriptMarkdown.format(transcript));
     if (savedReturn.isOk) Log.write(`arquivo salvo: ${savedReturn.instance}`);
-    else Log.write(`arquivo não salvo: ${GetTranscriptTool.describe(savedReturn.cause)}`);
+    else Log.write(`arquivo não salvo: ${ErrorText.of(savedReturn.cause)}`);
     return savedReturn;
   }
 
   private static failure(transcriptReturn: Result<Transcript>): CallToolResult {
     Log.write(`get_transcript falhou: ${transcriptReturn.errors!.join(', ')}`);
-    if (transcriptReturn.cause !== undefined) Log.write(`causa: ${GetTranscriptTool.describe(transcriptReturn.cause)}`);
+    if (transcriptReturn.cause !== undefined) Log.write(`causa: ${ErrorText.of(transcriptReturn.cause)}`);
     return {
       isError: true,
       content: [{ type: 'text', text: ResponsePresenter.failure(transcriptReturn.errors!, transcriptReturn.details) }],
@@ -85,13 +86,5 @@ ${ResponsePresenter.success(transcript)}`;
   private static argument(args: unknown, name: string): unknown {
     const isObject: boolean = typeof args === 'object' && args !== null;
     return isObject ? (args as Record<string, unknown>)[name] : undefined;
-  }
-
-  /** The message of an error, or the value as text. Checks for a text "message" instead of instanceof Error:
-   *  disk errors may come with another copy of the Error class (seen in Jest). */
-  private static describe(cause: unknown): string {
-    const message: unknown = (cause as { message?: unknown } | null | undefined)?.message;
-    const hasMessage: boolean = typeof message === 'string';
-    return hasMessage ? (message as string) : String(cause);
   }
 }

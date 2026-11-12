@@ -12,6 +12,7 @@ import { FetchDownloader } from './infra/install/fetch-downloader.js';
 import { InstallReportText } from './infra/install/installReport-text.js';
 import { RegistrationCommand, type RegistrationCommands } from './infra/install/registration-command.js';
 import { YtDlpInstaller, type InstallReport } from './infra/install/ytDlp-installer.js';
+import { ErrorText } from './infra/error-text.js';
 
 /** yt-dlp.exe has about 18 MB; two minutes is plenty even on a slow connection. */
 const DOWNLOAD_TIMEOUT_MS: number = 120_000;
@@ -57,6 +58,6 @@ async function start(): Promise<void> {
 }
 
 start().catch((error: unknown) => {
-  process.stdout.write(`Instalador parou com erro inesperado: ${error instanceof Error ? error.message : String(error)}\n`);
+  process.stdout.write(`Instalador parou com erro inesperado: ${ErrorText.of(error)}\n`);
   process.exitCode = 1;
 });

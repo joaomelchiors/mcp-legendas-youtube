@@ -10,8 +10,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
-
-export type Environment = Readonly<Record<string, string | undefined>>;
+import type { Environment } from '../environment.js';
 
 export class TranscriptFileWriter {
   private static readonly VARIABLE: string = 'LEGENDAS_DIR';

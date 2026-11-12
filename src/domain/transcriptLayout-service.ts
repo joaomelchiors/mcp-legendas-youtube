@@ -4,7 +4,7 @@
 // first segment that starts at or after its point.
 
 import type { Transcript } from './getTranscript-usecase.js';
-import type { TranscriptSegment } from './generics-vo.js';
+import { UrlVideo, type TranscriptSegment } from './generics-vo.js';
 
 /** One line of the header, e.g. { label: 'Canal', value: 'TED' }. The title is not a field. */
 export interface HeaderField {
@@ -31,7 +31,7 @@ export class TranscriptLayout {
   static headerFields(transcript: Transcript): HeaderField[] {
     const fields: HeaderField[] = [];
     if (transcript.channel !== null) fields.push({ label: 'Canal', value: transcript.channel });
-    fields.push({ label: 'Link', value: `https://www.youtube.com/watch?v=${transcript.videoId}` });
+    fields.push({ label: 'Link', value: UrlVideo.watchUrlOf(transcript.videoId) });
     if (transcript.uploadDate !== null) fields.push({ label: 'Publicado em', value: transcript.uploadDate });
     if (transcript.durationSeconds !== null) fields.push({ label: 'Duração', value: TranscriptLayout.time(transcript.durationSeconds) });
     fields.push({ label: 'Legenda', value: `${transcript.language}, ${TranscriptLayout.quality(transcript)}` });

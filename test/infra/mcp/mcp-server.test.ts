@@ -6,6 +6,7 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { McpServerFactory } from '../../../src/infra/mcp/mcp-server.js';
+import { Project } from '../../../src/infra/project.js';
 import { GetTranscriptTool } from '../../../src/infra/mcp/getTranscript-tool.js';
 import { GetTranscript } from '../../../src/domain/getTranscript-usecase.js';
 import { FakeTranscriptEngine } from '../../support/fakeTranscriptEngine.js';
@@ -32,7 +33,7 @@ beforeEach(() => {
 describe('McpServerFactory', () => {
   test('identifies itself with the project name and version', async () => {
     const client: Client = await connectedClient();
-    expect(client.getServerVersion()).toEqual({ name: 'mcp-legendas-youtube', version: '0.1.0' });
+    expect(client.getServerVersion()).toEqual({ name: Project.NAME, version: Project.VERSION });
   });
 
   test('tools/list returns exactly the get_transcript definition', async () => {

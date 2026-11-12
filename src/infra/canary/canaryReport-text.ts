@@ -2,14 +2,13 @@
 // canario/ultima-execucao.json to compare with the fixture info-ted.json when something changes.
 // The summary has no URL: only what the MCP reads from the consultation.
 
-import type { VideoInfo } from '../../domain/generics-vo.js';
+import { TrackName, type VideoInfo } from '../../domain/generics-vo.js';
 import { Canary, type CanaryReport, type CanaryStep } from './canary.js';
+import { Project } from '../project.js';
 
 export class CanaryReportText {
-  private static readonly ORIGINAL_SUFFIX: string = '-orig';
-
   static format(report: CanaryReport): string {
-    const lines: string[] = [`Canário do mcp-legendas-youtube (vídeo do TED ${Canary.VIDEO_ID})`];
+    const lines: string[] = [`Canário do ${Project.NAME} (vídeo do TED ${Canary.VIDEO_ID})`];
     report.steps.forEach((step: CanaryStep, index: number) => lines.push(CanaryReportText.stepLine(step, index + 1)));
     lines.push(CanaryReportText.resultLine(report));
     return `${lines.join('\n')}\n`;
@@ -46,7 +45,7 @@ export class CanaryReportText {
       uploadDate: info.uploadDate,
       isLive: info.isLive,
       manual: info.manual,
-      automaticOriginals: info.automatic.filter((name: string) => name.endsWith(CanaryReportText.ORIGINAL_SUFFIX)),
+      automaticOriginals: info.automatic.filter((name: string) => TrackName.isOriginal(name)),
       automaticCount: info.automatic.length,
     };
   }

@@ -19,8 +19,19 @@ export class UrlVideo {
   ]);
   private static readonly SHORT_HOST: string = 'youtu.be';
   private static readonly PATHS_WITH_ID: ReadonlySet<string> = new Set(['shorts', 'embed']);
+  private static readonly WATCH_URL: string = 'https://www.youtube.com/watch?v=';
 
   private constructor(public readonly id: string) {}
+
+  /** The one canonical link of the video, whatever link the user sent (no playlist, time or tracking). */
+  get watchUrl(): string {
+    return UrlVideo.watchUrlOf(this.id);
+  }
+
+  /** The canonical link for an ID that is already valid (e.g. the videoId of a Transcript). */
+  static watchUrlOf(id: string): string {
+    return `${UrlVideo.WATCH_URL}${id}`;
+  }
 
   static tryCreate(input: unknown): Result<UrlVideo> {
     if (typeof input !== 'string') return Result.fail<UrlVideo>(ErrorCode.INVALID_URL);
@@ -71,7 +82,6 @@ export class UrlVideo {
 export class Language {
   private static readonly CODE_PATTERN: RegExp = /^([a-z]{2,3})(?:-([a-z0-9]{2,8}))?$/i;
   private static readonly ALL_LANGUAGES: string = 'all';
-  private static readonly ORIGINAL_TRACK_VARIANT: string = 'orig';
 
   private constructor(public readonly code: string | null) {}
 
@@ -99,7 +109,7 @@ export class Language {
     const language: string = parts[1].toLowerCase();
     const variant: string | undefined = parts[2];
     if (language === Language.ALL_LANGUAGES) return null;
-    if (variant?.toLowerCase() === Language.ORIGINAL_TRACK_VARIANT) return null;
+    if (TrackName.isOriginal(text.toLowerCase())) return null;
 
     return variant === undefined ? language : `${language}-${Language.normalizeVariant(variant)}`;
   }
@@ -140,6 +150,23 @@ export type TrackKind = 'manual' | 'automatic';
 export interface Track {
   readonly language: string;
   readonly kind: TrackKind;
+}
+
+/**
+ * Rule of YouTube's track names: the automatic transcription of the audio is "<language>-orig"
+ * ("en-orig", "pt-BR-orig"). The other automatic names ("pt", "es") are machine translations.
+ */
+export class TrackName {
+  private static readonly ORIGINAL_SUFFIX: string = '-orig';
+
+  static isOriginal(name: string): boolean {
+    return name.endsWith(TrackName.ORIGINAL_SUFFIX);
+  }
+
+  /** "pt-BR" -> "pt-BR-orig". */
+  static originalOf(language: string): string {
+    return `${language}${TrackName.ORIGINAL_SUFFIX}`;
+  }
 }
 
 /** One piece of caption text and the second of the video where it starts. */

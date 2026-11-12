@@ -25,7 +25,7 @@ export class YtDlpArgumentsBuilder {
   }
 
   static videoInfo(video: UrlVideo): string[] {
-    return [...YtDlpArgumentsBuilder.COMMON, '-J', '--', YtDlpArgumentsBuilder.url(video)];
+    return [...YtDlpArgumentsBuilder.COMMON, '-J', '--', video.watchUrl];
   }
 
   static download(video: UrlVideo, track: Track, outputTemplate: string): Result<string[]> {
@@ -42,11 +42,8 @@ export class YtDlpArgumentsBuilder {
       '-o',
       outputTemplate,
       '--',
-      YtDlpArgumentsBuilder.url(video),
+      video.watchUrl,
     ]);
   }
 
-  private static url(video: UrlVideo): string {
-    return `https://www.youtube.com/watch?v=${video.id}`;
-  }
 }

@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { McpProcess } from './support/mcpProcess.js';
+import { Project } from '../../src/infra/project.js';
 
 const VALID_URL: string = 'https://www.youtube.com/watch?v=iG9CE55wbtY';
 
@@ -29,7 +30,7 @@ afterAll(async () => {
 
 describe('the server starts over stdio', () => {
   test('identifies itself with the project name and version', () => {
-    expect(mcp.serverVersion).toEqual({ name: 'mcp-legendas-youtube', version: '0.1.0' });
+    expect(mcp.serverVersion).toEqual({ name: Project.NAME, version: Project.VERSION });
   });
 
   test('tools/list returns only get_transcript', async () => {
@@ -59,7 +60,7 @@ describe('the log goes to stderr (stdout belongs to the protocol)', () => {
   test('says where it looked for yt-dlp, where the transcripts go, and that it started', () => {
     expect(mcp.log).toContain(`yt-dlp: YT_DLP_PATH="${missingYtDlp}" (não encontrado)`);
     expect(mcp.log).toContain(`legendas: ${transcriptsFolder}`);
-    expect(mcp.log).toContain('versão 0.1.0 iniciada (stdio)');
+    expect(mcp.log).toContain(`versão ${Project.VERSION} iniciada (stdio)`);
   });
 
   test('logs each call', () => {

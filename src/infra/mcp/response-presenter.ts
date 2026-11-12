@@ -2,6 +2,7 @@
 // the infra layer turns each code into a message). Messages are in Portuguese, for the user.
 
 import type { Transcript } from '../../domain/getTranscript-usecase.js';
+import { TrackName } from '../../domain/generics-vo.js';
 import { ErrorCode, type AvailableCaptions, type ErrorDetails } from '../../domain/shared/errorCode.js';
 import type { Result } from '../../domain/shared/result.js';
 import { TranscriptFormatter } from './transcript-formatter.js';
@@ -41,7 +42,6 @@ export class ResponsePresenter {
     [ErrorCode.CHECKSUM_MISMATCH]: 'Erro interno: o checksum do yt-dlp baixado não confere.',
     [ErrorCode.VERSION_MISMATCH]: 'Erro interno: o yt-dlp instalado não tem a versão esperada.',
   };
-  private static readonly ORIGINAL_SUFFIX: string = '-orig';
 
   /** Header and running text with time markers (TranscriptFormatter), inside the block of video content. */
   static success(transcript: Transcript): string {
@@ -62,7 +62,7 @@ export class ResponsePresenter {
 
   /** Manual and automatic originals by name; translations only counted (TED has more than 160). */
   private static availableText(available: AvailableCaptions): string {
-    const originals: string[] = available.automatic.filter((name: string) => name.endsWith(ResponsePresenter.ORIGINAL_SUFFIX));
+    const originals: string[] = available.automatic.filter((name: string) => TrackName.isOriginal(name));
     const translations: number = available.automatic.length - originals.length;
     return [
       `Legendas revisadas (manuais): ${ResponsePresenter.listOrNone(available.manual)}.`,

@@ -9,7 +9,7 @@
 // No language: the original language of the video, manual first, then "<language>-orig".
 // Before all that: a live stream in progress has no caption yet (LIVE_IN_PROGRESS).
 
-import { Language, VideoInfo, type Track } from './generics-vo.js';
+import { Language, TrackName, VideoInfo, type Track } from './generics-vo.js';
 import { Result } from './shared/result.js';
 import { ErrorCode } from './shared/errorCode.js';
 
@@ -22,7 +22,6 @@ export interface TrackPlan {
 export class TrackSelection {
   /** Order of variants where João has a preference. Other languages: exact code, then variants as they appear. */
   private static readonly PREFERRED_VARIANTS: Readonly<Record<string, readonly string[]>> = { pt: ['pt-BR', 'pt-PT'] };
-  private static readonly ORIGINAL_SUFFIX: string = '-orig';
 
   static select(info: VideoInfo, language: Language): Result<TrackPlan> {
     if (info.isLive) return Result.fail<TrackPlan>(ErrorCode.LIVE_IN_PROGRESS);
@@ -54,7 +53,7 @@ export class TrackSelection {
 
   /** Original language unknown: only a single "-orig" can be trusted; more than one goes to the user. */
   private static singleOriginal(info: VideoInfo): Result<TrackPlan> {
-    const originals: string[] = info.automatic.filter((name: string) => name.endsWith(TrackSelection.ORIGINAL_SUFFIX));
+    const originals: string[] = info.automatic.filter((name: string) => TrackName.isOriginal(name));
     if (originals.length === 1) return TrackSelection.plan({ language: originals[0], kind: 'automatic' });
     return TrackSelection.nothingFor(info);
   }
@@ -81,14 +80,14 @@ export class TrackSelection {
     const askedVariant: string[] = code === base ? [] : [code];
     const preferred: readonly string[] = TrackSelection.PREFERRED_VARIANTS[base] ?? [];
     const otherVariants: string[] = available.filter(
-      (name: string) => name.startsWith(`${base}-`) && !name.endsWith(TrackSelection.ORIGINAL_SUFFIX),
+      (name: string) => name.startsWith(`${base}-`) && !TrackName.isOriginal(name),
     );
     return TrackSelection.unique([...askedVariant, ...preferred, base, ...otherVariants]);
   }
 
   /** "pt-BR" -> ["pt-BR-orig", "pt-orig"]; "pt" -> ["pt-orig"]. */
   private static originalNames(code: string): string[] {
-    return TrackSelection.unique([code, TrackSelection.base(code)]).map((name: string) => name + TrackSelection.ORIGINAL_SUFFIX);
+    return TrackSelection.unique([code, TrackSelection.base(code)]).map((name: string) => TrackName.originalOf(name));
   }
 
   private static firstAvailable(candidates: readonly string[], available: readonly string[]): string | null {

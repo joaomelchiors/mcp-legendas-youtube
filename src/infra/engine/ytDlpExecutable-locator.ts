@@ -9,8 +9,7 @@ import { join } from 'node:path';
 import { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
 import { YtDlpRelease } from '../install/ytDlp-release.js';
-
-export type Environment = Readonly<Record<string, string | undefined>>;
+import type { Environment } from '../environment.js';
 
 export class YtDlpExecutableLocator {
   private static readonly VARIABLE: string = 'YT_DLP_PATH';
