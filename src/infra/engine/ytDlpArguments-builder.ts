@@ -9,8 +9,10 @@ import { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
 
 export class YtDlpArgumentsBuilder {
+  /** Never read a yt-dlp configuration file of the machine: only the arguments below count. */
+  private static readonly IGNORE_CONFIG: string = '--ignore-config';
   private static readonly COMMON: readonly string[] = [
-    '--ignore-config',
+    YtDlpArgumentsBuilder.IGNORE_CONFIG,
     '--no-cache-dir',
     '--encoding',
     'utf-8',
@@ -21,7 +23,7 @@ export class YtDlpArgumentsBuilder {
 
   /** Only the version (for the canary): no URL, nothing downloaded. */
   static version(): string[] {
-    return ['--ignore-config', '--version'];
+    return [YtDlpArgumentsBuilder.IGNORE_CONFIG, '--version'];
   }
 
   static videoInfo(video: UrlVideo): string[] {
@@ -30,7 +32,8 @@ export class YtDlpArgumentsBuilder {
 
   static download(video: UrlVideo, track: Track, outputTemplate: string): Result<string[]> {
     const isPlainName: boolean = YtDlpArgumentsBuilder.PLAIN_NAME.test(track.language);
-    if (!isPlainName) return Result.fail<string[]>(ErrorCode.ENGINE_OUTPUT);
+    // The domain never sends such a name (it chooses from what yt-dlp listed): it is an internal error, not an engine answer.
+    if (!isPlainName) return Result.failWithCause<string[]>(ErrorCode.UNEXPECTED, `nome de faixa recusado: ${JSON.stringify(track.language)}`);
 
     return Result.ok<string[]>([
       ...YtDlpArgumentsBuilder.COMMON,

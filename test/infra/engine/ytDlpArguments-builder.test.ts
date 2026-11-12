@@ -59,8 +59,10 @@ describe('download (one exact track)', () => {
     ['exclusion', '-live_chat'],
     ['space', 'pt BR'],
     ['empty', ''],
-  ])('track name that is not a plain code (%s) is refused with ENGINE_OUTPUT', (_case: string, language: string) => {
-    expect(download({ language, kind: 'manual' }).errors).toEqual([ErrorCode.ENGINE_OUTPUT]);
+  ])('track name that is not a plain code (%s) is refused as an internal error (UNEXPECTED), with the name as cause for the log', (_case: string, language: string) => {
+    const refused: Result<string[]> = download({ language, kind: 'manual' });
+    expect(refused.errors).toEqual([ErrorCode.UNEXPECTED]);
+    expect(refused.cause).toBe(`nome de faixa recusado: ${JSON.stringify(language)}`);
   });
 });
 

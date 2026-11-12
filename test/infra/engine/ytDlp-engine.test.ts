@@ -147,9 +147,9 @@ describe('downloadTrack (one exact track)', () => {
     expect((await engine.downloadTrack(VIDEO, MANUAL_EN)).errors).toEqual([ErrorCode.TIMEOUT]);
   });
 
-  test('a track name that is not a plain code: ENGINE_OUTPUT without running anything', async () => {
+  test('a track name that is not a plain code: UNEXPECTED (the domain never sends one), without running anything', async () => {
     const { engine, runner } = engineWith(() => finished(0));
-    expect((await engine.downloadTrack(VIDEO, { language: 'pt.*', kind: 'manual' })).errors).toEqual([ErrorCode.ENGINE_OUTPUT]);
+    expect((await engine.downloadTrack(VIDEO, { language: 'pt.*', kind: 'manual' })).errors).toEqual([ErrorCode.UNEXPECTED]);
     expect(runner.calls).toEqual([]);
   });
 
