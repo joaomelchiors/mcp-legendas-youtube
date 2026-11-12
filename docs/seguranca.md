@@ -46,7 +46,7 @@ Cada download usa uma pasta temporária própria (`src/infra/engine/ytDlp-engine
 
 O instalador confere o checksum **na memória, antes de gravar**: um arquivo que não confere nunca chega ao disco. O arquivo certo é gravado com outro nome e só então renomeado, então nunca fica um yt-dlp pela metade.
 
-**Achado e corrigido nesta revisão:** o gravador (`src/infra/storage/transcriptFile-writer.ts`) confiava que o nome vinha limpo. Hoje vem, porque o `TranscriptFileName` só usa caracteres seguros. Mas, se um dia outro código chamasse o gravador com `../fora.md`, ele gravaria fora da pasta; o teste escrito antes da correção mostrou isso (o arquivo caiu na pasta de teste, um nível acima). Agora o gravador **recusa** qualquer nome que não seja só um nome de arquivo (vazio, `.`, `..`, com `/` ou `\`, com letra de unidade ou caminho completo), com `FILE_WRITE_FAILED` e o motivo no log (linhas 30 e 44). Oito testes cobrem isso.
+**Achado e corrigido nesta revisão:** o gravador (`src/infra/storage/folderFile-writer.ts`, antes `transcriptFile-writer.ts`) confiava que o nome vinha limpo. Hoje vem, porque o `TranscriptFileName` só usa caracteres seguros. Mas, se um dia outro código chamasse o gravador com `../fora.md`, ele gravaria fora da pasta; o teste escrito antes da correção mostrou isso (o arquivo caiu na pasta de teste, um nível acima). Agora o gravador **recusa** qualquer nome que não seja só um nome de arquivo (vazio, `.`, `..`, com `/` ou `\`, com letra de unidade ou caminho completo), com `FILE_WRITE_FAILED` e o motivo no log (linhas 19 e 32). Oito testes cobrem isso.
 
 ## 5. Log
 

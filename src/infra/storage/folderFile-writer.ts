@@ -1,32 +1,21 @@
-// Saves the transcript file.
-// It receives the name (TranscriptFileName) and the content (TranscriptMarkdown) ready; it only writes.
-// Folder: LEGENDAS_DIR, otherwise "legendas/" inside the folder where the MCP started.
+// Saves a file inside one folder: the transcripts (folder from TranscriptsFolder) and the canary summary.
+// It receives the name and the content ready; it only writes.
 // Creates the folder when missing, writes UTF-8, replaces a file with the same name.
 // A failure becomes FILE_WRITE_FAILED (with the exception kept as cause for the log), never an exception.
 // It only writes INSIDE its folder. A name that is not a plain file name ("..", "/", "\",
-// a drive or an absolute path) is refused, even though TranscriptFileName never makes one (defense in depth).
+// a drive or an absolute path) is refused, even though the callers never make one (defense in depth).
 
 import { mkdir, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
-import type { Environment } from '../environment.js';
 
-export class TranscriptFileWriter {
-  private static readonly VARIABLE: string = 'LEGENDAS_DIR';
-  private static readonly DEFAULT_FOLDER: string = 'legendas';
-
-  /** The folder to use: LEGENDAS_DIR, otherwise "legendas" inside the folder where the process started. */
-  static folderFrom(environment: Environment, startFolder: string = process.cwd()): string {
-    const configured: string = (environment[TranscriptFileWriter.VARIABLE] ?? '').trim();
-    return configured !== '' ? configured : join(startFolder, TranscriptFileWriter.DEFAULT_FOLDER);
-  }
-
+export class FolderFileWriter {
   constructor(readonly folder: string) {}
 
   /** Writes the file and returns its full path. */
   async save(fileName: string, content: string): Promise<Result<string>> {
-    if (!TranscriptFileWriter.isPlainName(fileName)) {
+    if (!FolderFileWriter.isPlainName(fileName)) {
       return Result.failWithCause<string>(ErrorCode.FILE_WRITE_FAILED, `nome de arquivo recusado: ${JSON.stringify(fileName)}`);
     }
     const path: string = join(this.folder, fileName);

@@ -14,7 +14,7 @@ import { VideoInfo, type TranscriptSegment } from '../../../src/domain/generics-
 import { Result } from '../../../src/domain/shared/result.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { FakeTranscriptEngine, type FakeEngineConfig } from '../../support/fakeTranscriptEngine.js';
-import { TranscriptFileWriter } from '../../../src/infra/storage/transcriptFile-writer.js';
+import { FolderFileWriter } from '../../../src/infra/storage/folderFile-writer.js';
 
 const TED_URL: string = 'https://www.youtube.com/watch?v=iG9CE55wbtY';
 const TED: VideoInfo = new VideoInfo('TED talk', 'en', ['en'], ['en-orig']);
@@ -28,7 +28,7 @@ let legendas: string;
 
 function toolWith(config: FakeEngineConfig, folder: string = legendas): { tool: GetTranscriptTool; engine: FakeTranscriptEngine } {
   const engine: FakeTranscriptEngine = new FakeTranscriptEngine(config);
-  return { tool: new GetTranscriptTool(new GetTranscript(engine), new TranscriptFileWriter(folder)), engine };
+  return { tool: new GetTranscriptTool(new GetTranscript(engine), new FolderFileWriter(folder)), engine };
 }
 
 function textOf(result: CallToolResult): string {
@@ -115,7 +115,7 @@ describe('unexpected exception that is not an Error', () => {
         throw 'falha em texto puro';
       },
     } as unknown as GetTranscript;
-    const result: CallToolResult = await new GetTranscriptTool(throwingUseCase, new TranscriptFileWriter(legendas)).call({ url: TED_URL });
+    const result: CallToolResult = await new GetTranscriptTool(throwingUseCase, new FolderFileWriter(legendas)).call({ url: TED_URL });
     expect(result.isError).toBe(true);
     expect(stderr).toHaveBeenCalledWith(expect.stringMatching(/causa: falha em texto puro/));
   });

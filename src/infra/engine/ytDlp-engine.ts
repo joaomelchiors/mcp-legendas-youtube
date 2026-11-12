@@ -10,12 +10,14 @@ import type { TranscriptEngine } from '../../domain/transcriptEngine-ports.js';
 import type { Track, TranscriptSegment, UrlVideo, VideoInfo } from '../../domain/generics-vo.js';
 import { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
-import type { CommandResult, CommandRunner } from '../process/command-runner.js';
+import { NodeCommandRunner, type CommandResult, type CommandRunner } from '../process/command-runner.js';
 import { YtDlpArgumentsBuilder } from './ytDlpArguments-builder.js';
 import { VideoInfoParser } from './videoInfo-parser.js';
 import { YtDlpOutputReader } from './ytDlpOutput-reader.js';
 import { VttReader } from './vtt-reader.js';
+import { YtDlpExecutableLocator } from './ytDlpExecutable-locator.js';
 import { Log } from '../log.js';
+import type { Environment } from '../environment.js';
 
 export class YtDlpEngine implements TranscriptEngine {
   /** Time limit for each yt-dlp run, used by the MCP and the canary. The consultations in the engine tests took a few seconds. */
@@ -29,6 +31,11 @@ export class YtDlpEngine implements TranscriptEngine {
     private readonly executable: Result<string>,
     private readonly timeoutMs: number,
   ) {}
+
+  /** The real engine, the same for the MCP and the canary: yt-dlp from the locator, Node runner, TIMEOUT_MS. */
+  static fromEnvironment(environment: Environment): YtDlpEngine {
+    return new YtDlpEngine(new NodeCommandRunner(), YtDlpExecutableLocator.locate(environment), YtDlpEngine.TIMEOUT_MS);
+  }
 
   /** The yt-dlp version. Only the canary uses it, so it is not part of the port. */
   async version(): Promise<Result<string>> {

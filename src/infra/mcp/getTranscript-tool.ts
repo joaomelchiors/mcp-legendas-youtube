@@ -11,7 +11,7 @@ import { Result } from '../../domain/shared/result.js';
 import { ResponsePresenter } from './response-presenter.js';
 import { TranscriptMarkdown } from './transcript-markdown.js';
 import { TranscriptFileName } from '../storage/transcriptFile-name.js';
-import type { TranscriptFileWriter } from '../storage/transcriptFile-writer.js';
+import type { FolderFileWriter } from '../storage/folderFile-writer.js';
 import { Log } from '../log.js';
 import { ErrorText } from '../error-text.js';
 
@@ -43,7 +43,7 @@ export class GetTranscriptTool {
 
   constructor(
     private readonly getTranscript: GetTranscript,
-    private readonly writer: TranscriptFileWriter,
+    private readonly writer: FolderFileWriter,
   ) {}
 
   async call(args: unknown): Promise<CallToolResult> {
@@ -65,7 +65,7 @@ ${ResponsePresenter.success(transcript)}`;
     return { content: [{ type: 'text', text }] };
   }
 
-  /** Saves the Markdown file (name: TranscriptFileName, content: TranscriptMarkdown, writing: TranscriptFileWriter) and logs the path or the cause. */
+  /** Saves the Markdown file (name: TranscriptFileName, content: TranscriptMarkdown, writing: FolderFileWriter) and logs the path or the cause. */
   private async save(transcript: Transcript): Promise<Result<string>> {
     const savedReturn: Result<string> = await this.writer.save(TranscriptFileName.for(transcript), TranscriptMarkdown.format(transcript));
     if (savedReturn.isOk) Log.write(`arquivo salvo: ${savedReturn.instance}`);

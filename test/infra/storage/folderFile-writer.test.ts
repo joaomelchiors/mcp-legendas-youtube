@@ -1,11 +1,10 @@
-// Tests for TranscriptFileWriter: saves the transcript file.
-// Folder: LEGENDAS_DIR, otherwise "legendas/" inside the folder where the MCP started.
+// Tests for FolderFileWriter: saves a file inside one folder (the transcripts, and the canary summary).
 // Real files, in temporary folders removed at the end. A failure becomes an error code, never an exception.
 
 import { mkdtempSync, readFileSync, rmSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { TranscriptFileWriter } from '../../../src/infra/storage/transcriptFile-writer.js';
+import { FolderFileWriter } from '../../../src/infra/storage/folderFile-writer.js';
 import { Result } from '../../../src/domain/shared/result.js';
 import { ErrorCode } from '../../../src/domain/shared/errorCode.js';
 
@@ -17,44 +16,26 @@ afterEach(() => {
   rmSync(sandbox, { recursive: true, force: true });
 });
 
-describe('TranscriptFileWriter.folderFrom', () => {
-  test('without LEGENDAS_DIR: "legendas" inside the folder where the MCP started', () => {
-    expect(TranscriptFileWriter.folderFrom({}, 'C:/Projetos/eng-reversa')).toBe(join('C:/Projetos/eng-reversa', 'legendas'));
-  });
-
-  test('LEGENDAS_DIR empty or only spaces counts as not set', () => {
-    expect(TranscriptFileWriter.folderFrom({ LEGENDAS_DIR: '  ' }, 'C:/Projetos/eng-reversa')).toBe(join('C:/Projetos/eng-reversa', 'legendas'));
-  });
-
-  test('LEGENDAS_DIR set: that folder, without spaces around', () => {
-    expect(TranscriptFileWriter.folderFrom({ LEGENDAS_DIR: ' D:/Notas/Legendas ' }, 'C:/qualquer')).toBe('D:/Notas/Legendas');
-  });
-
-  test('by default it uses the real folder where the process started', () => {
-    expect(TranscriptFileWriter.folderFrom({})).toBe(join(process.cwd(), 'legendas'));
-  });
-});
-
-describe('TranscriptFileWriter.save', () => {
+describe('FolderFileWriter.save', () => {
   test('keeps the folder it will use, for the startup log', () => {
-    expect(new TranscriptFileWriter(join(sandbox, 'legendas')).folder).toBe(join(sandbox, 'legendas'));
+    expect(new FolderFileWriter(join(sandbox, 'legendas')).folder).toBe(join(sandbox, 'legendas'));
   });
 
   test('creates the folder when it does not exist (even nested) and returns the full path of the file', async () => {
     const folder: string = join(sandbox, 'nao', 'existe', 'legendas');
-    const savedReturn: Result<string> = await new TranscriptFileWriter(folder).save('2007-01-07_ted_pt-BR_iG9CE55wbtY.md', '# TED\n');
+    const savedReturn: Result<string> = await new FolderFileWriter(folder).save('2007-01-07_ted_pt-BR_iG9CE55wbtY.md', '# TED\n');
     expect(savedReturn.instance).toBe(join(folder, '2007-01-07_ted_pt-BR_iG9CE55wbtY.md'));
     expect(existsSync(savedReturn.instance)).toBe(true);
   });
 
   test('writes the exact content in UTF-8, accents included', async () => {
     const content: string = '# Você ainda usa o Claude\n\n- Legenda: pt-orig, gerada automaticamente\n\nAção, coração, pão. 360°\n';
-    const savedReturn: Result<string> = await new TranscriptFileWriter(sandbox).save('a.md', content);
+    const savedReturn: Result<string> = await new FolderFileWriter(sandbox).save('a.md', content);
     expect(readFileSync(savedReturn.instance, 'utf-8')).toBe(content);
   });
 
   test('saving again with the same name replaces the file (no duplicates)', async () => {
-    const writer: TranscriptFileWriter = new TranscriptFileWriter(sandbox);
+    const writer: FolderFileWriter = new FolderFileWriter(sandbox);
     await writer.save('a.md', 'primeira versão\n');
     const savedReturn: Result<string> = await writer.save('a.md', 'segunda versão\n');
     expect(readFileSync(savedReturn.instance, 'utf-8')).toBe('segunda versão\n');
@@ -66,7 +47,7 @@ describe('TranscriptFileWriter.save', () => {
     let savedReturn: Result<string> | undefined;
     await expect(
       (async () => {
-        savedReturn = await new TranscriptFileWriter(join(notAFolder, 'legendas')).save('a.md', 'conteúdo\n');
+        savedReturn = await new FolderFileWriter(join(notAFolder, 'legendas')).save('a.md', 'conteúdo\n');
       })(),
     ).resolves.toBeUndefined();
     expect(savedReturn!.errors).toEqual([ErrorCode.FILE_WRITE_FAILED]);
@@ -76,7 +57,7 @@ describe('TranscriptFileWriter.save', () => {
   });
 });
 
-describe('TranscriptFileWriter.save only writes inside its folder (defense in depth)', () => {
+describe('FolderFileWriter.save only writes inside its folder (defense in depth)', () => {
   test.each([
     ['going up a folder', '../fora.md'],
     ['going up with a Windows separator', '..\\fora.md'],
@@ -87,7 +68,7 @@ describe('TranscriptFileWriter.save only writes inside its folder (defense in de
     ['an empty name', ''],
   ])('%s: refused with FILE_WRITE_FAILED and the reason, nothing written', async (_case: string, fileName: string) => {
     const folder: string = join(sandbox, 'legendas');
-    const savedReturn: Result<string> = await new TranscriptFileWriter(folder).save(fileName, 'x');
+    const savedReturn: Result<string> = await new FolderFileWriter(folder).save(fileName, 'x');
     expect(savedReturn.errors).toEqual([ErrorCode.FILE_WRITE_FAILED]);
     expect(String(savedReturn.cause)).toMatch(/nome de arquivo recusado/);
     expect(existsSync(join(sandbox, 'fora.md'))).toBe(false);
@@ -95,7 +76,7 @@ describe('TranscriptFileWriter.save only writes inside its folder (defense in de
   });
 
   test('a plain name made by TranscriptFileName is still accepted', async () => {
-    const savedReturn: Result<string> = await new TranscriptFileWriter(sandbox).save('2007-01-07_ted_pt-BR_iG9CE55wbtY.md', 'x');
+    const savedReturn: Result<string> = await new FolderFileWriter(sandbox).save('2007-01-07_ted_pt-BR_iG9CE55wbtY.md', 'x');
     expect(savedReturn.isOk).toBe(true);
   });
 });

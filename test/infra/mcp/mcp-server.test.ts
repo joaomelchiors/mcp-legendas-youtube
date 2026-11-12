@@ -10,13 +10,13 @@ import { Project } from '../../../src/infra/project.js';
 import { GetTranscriptTool } from '../../../src/infra/mcp/getTranscript-tool.js';
 import { GetTranscript } from '../../../src/domain/getTranscript-usecase.js';
 import { FakeTranscriptEngine } from '../../support/fakeTranscriptEngine.js';
-import { TranscriptFileWriter } from '../../../src/infra/storage/transcriptFile-writer.js';
+import { FolderFileWriter } from '../../../src/infra/storage/folderFile-writer.js';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 async function connectedClient(): Promise<Client> {
   // No call here reaches a successful transcript, so nothing is ever written to this folder.
-  const writer: TranscriptFileWriter = new TranscriptFileWriter(join(tmpdir(), 'mcp-legendas-nunca-usada'));
+  const writer: FolderFileWriter = new FolderFileWriter(join(tmpdir(), 'mcp-legendas-nunca-usada'));
   const tool: GetTranscriptTool = new GetTranscriptTool(new GetTranscript(new FakeTranscriptEngine({})), writer);
   const server: Server = McpServerFactory.create(tool);
   const [clientSide, serverSide] = InMemoryTransport.createLinkedPair();

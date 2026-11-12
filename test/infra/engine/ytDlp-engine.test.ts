@@ -179,3 +179,11 @@ describe('version (used by the canary; not part of the port)', () => {
     expect((await engine.version()).errors).toEqual([ErrorCode.ENGINE_FAILED]);
   });
 });
+
+describe('YtDlpEngine.fromEnvironment (the same assembly for the MCP and the canary)', () => {
+  test('builds a real engine that finds yt-dlp through YT_DLP_PATH (a missing file: ENGINE_NOT_FOUND, nothing runs)', async () => {
+    const engine: YtDlpEngine = YtDlpEngine.fromEnvironment({ YT_DLP_PATH: join(__dirname, 'nao-existe', 'yt-dlp.exe') });
+    expect(engine).toBeInstanceOf(YtDlpEngine);
+    expect((await engine.version()).errors).toEqual([ErrorCode.ENGINE_NOT_FOUND]);
+  });
+});
