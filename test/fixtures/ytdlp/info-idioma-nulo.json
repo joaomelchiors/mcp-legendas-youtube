@@ -1,0 +1,82 @@
+{
+  "id": "jNQXAC9IVRw",
+  "title": "Me at the zoo",
+  "language": null,
+  "duration": 19,
+  "channel": "jawed",
+  "upload_date": "20050424",
+  "subtitles": {
+    "en": [
+      {
+        "ext": "json3",
+        "name": "English"
+      },
+      {
+        "ext": "srv1",
+        "name": "English"
+      },
+      {
+        "ext": "srv2",
+        "name": "English"
+      },
+      {
+        "ext": "srv3",
+        "name": "English"
+      },
+      {
+        "ext": "ttml",
+        "name": "English"
+      },
+      {
+        "ext": "srt",
+        "name": "English"
+      },
+      {
+        "ext": "vtt",
+        "name": "English"
+      }
+    ],
+    "de": [
+      {
+        "ext": "json3",
+        "name": "German"
+      },
+      {
+        "ext": "srv1",
+        "name": "German"
+      },
+      {
+        "ext": "srv2",
+        "name": "German"
+      },
+      {
+        "ext": "srv3",
+        "name": "German"
+      },
+      {
+        "ext": "ttml",
+        "name": "German"
+      },
+      {
+        "ext": "srt",
+        "name": "German"
+      },
+      {
+        "ext": "vtt",
+        "name": "German"
+      }
+    ]
+  },
+  "automatic_captions": {
+    "en": [
+      {
+        "ext": "vtt"
+      }
+    ],
+    "de": [
+      {
+        "ext": "vtt"
+      }
+    ]
+  }
+}

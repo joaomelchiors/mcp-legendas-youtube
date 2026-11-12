@@ -1,0 +1,6 @@
+[youtube] Extracting URL: https://www.youtube.com/watch?v=iG9CE55wbtY
+[youtube] iG9CE55wbtY: Downloading webpage
+[youtube] iG9CE55wbtY: Downloading visionos player API JSON
+[youtube] iG9CE55wbtY: Downloading m3u8 information
+[info] iG9CE55wbtY: Downloading 1 format(s): 398-sr+251
+[info] There are no subtitles for the requested languages

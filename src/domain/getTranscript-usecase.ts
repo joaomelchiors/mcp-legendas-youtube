@@ -1,0 +1,81 @@
+// Use case: get the transcript of a YouTube video.
+// This is the map of the flow. It leaves on the first failure.
+//   1. url      -> UrlVideo     (value object)
+//   2. language -> Language     (value object; empty means the original)
+//   3. engine   -> VideoInfo    (consult first: what exists)
+//   4. domain   -> TrackPlan    (TrackSelection: the exact track, and a fallback when it is a translation)
+//   5. engine   -> segments     (download the preferred track; if it fails and there is a fallback, the fallback)
+
+import { Language, UrlVideo, VideoInfo, type Track, type TrackKind, type TranscriptSegment } from './generics-vo.js';
+import { TrackSelection, type TrackPlan } from './trackSelection-service.js';
+import type { TranscriptEngine } from './transcriptEngine-ports.js';
+import { Result } from './shared/result.js';
+
+export interface Transcript {
+  readonly videoId: string;
+  readonly title: string;
+  readonly channel: string | null;
+  /** "YYYY-MM-DD". */
+  readonly uploadDate: string | null;
+  readonly durationSeconds: number | null;
+  /** Name of the downloaded track (e.g. "pt-BR", "pt-orig"). */
+  readonly language: string;
+  /** manual: "legenda revisada"; automatic: "gerada automaticamente". */
+  readonly kind: TrackKind;
+  readonly segments: readonly TranscriptSegment[];
+  /** True when the requested translation failed and the original language came instead. */
+  readonly isOriginalFallback: boolean;
+}
+
+export class GetTranscript {
+  constructor(private readonly engine: TranscriptEngine) {}
+
+  async execute(url: unknown, language: unknown): Promise<Result<Transcript>> {
+    const urlVideoReturn: Result<UrlVideo> = UrlVideo.tryCreate(url);
+    if (urlVideoReturn.isFailure) return Result.fail<Transcript>(urlVideoReturn.errors!, urlVideoReturn.details);
+
+    const languageReturn: Result<Language> = Language.tryCreate(language);
+    if (languageReturn.isFailure) return Result.fail<Transcript>(languageReturn.errors!, languageReturn.details);
+
+    const videoInfoReturn: Result<VideoInfo> = await this.engine.getVideoInfo(urlVideoReturn.instance);
+    if (videoInfoReturn.isFailure) return Result.fail<Transcript>(videoInfoReturn.errors!, videoInfoReturn.details);
+
+    const planReturn: Result<TrackPlan> = TrackSelection.select(videoInfoReturn.instance, languageReturn.instance);
+    if (planReturn.isFailure) return Result.fail<Transcript>(planReturn.errors!, planReturn.details);
+
+    return this.download(urlVideoReturn.instance, videoInfoReturn.instance, planReturn.instance);
+  }
+
+  /** Downloads the preferred track; if it fails and the plan has a fallback, downloads the fallback. */
+  private async download(video: UrlVideo, info: VideoInfo, plan: TrackPlan): Promise<Result<Transcript>> {
+    const preferredReturn: Result<TranscriptSegment[]> = await this.engine.downloadTrack(video, plan.preferred);
+    if (preferredReturn.isOk) {
+      return Result.ok<Transcript>(this.transcript(video, info, plan.preferred, preferredReturn.instance, false));
+    }
+    if (plan.fallback === null) return Result.fail<Transcript>(preferredReturn.errors!, preferredReturn.details);
+
+    const fallbackReturn: Result<TranscriptSegment[]> = await this.engine.downloadTrack(video, plan.fallback);
+    if (fallbackReturn.isFailure) return Result.fail<Transcript>(fallbackReturn.errors!, fallbackReturn.details);
+    return Result.ok<Transcript>(this.transcript(video, info, plan.fallback, fallbackReturn.instance, true));
+  }
+
+  private transcript(
+    video: UrlVideo,
+    info: VideoInfo,
+    track: Track,
+    segments: TranscriptSegment[],
+    isOriginalFallback: boolean,
+  ): Transcript {
+    return {
+      videoId: video.id,
+      title: info.title,
+      channel: info.channel,
+      uploadDate: info.uploadDate,
+      durationSeconds: info.durationSeconds,
+      language: track.language,
+      kind: track.kind,
+      segments,
+      isOriginalFallback,
+    };
+  }
+}

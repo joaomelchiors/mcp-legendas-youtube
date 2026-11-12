@@ -1,0 +1,36 @@
+{
+  "name": "mcp-legendas-youtube",
+  "version": "0.1.0",
+  "description": "Servidor MCP local que obtém a legenda de vídeos do YouTube, usando o yt-dlp como motor.",
+  "private": true,
+  "author": "João Marcos Melchiors",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "test:cobertura": "jest --coverage",
+    "tipos:testes": "tsc -p tsconfig.test.json",
+    "canario": "npm run build && node dist/canary.js",
+    "instalar": "npm install && npm run build && node dist/install.js"
+  },
+  "config": {
+    "ytDlpVersion": "2026.10.26"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.16.22",
+    "@swc/jest": "^0.2.39",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.6.6",
+    "jest": "^30.5.2",
+    "typescript": "^7.0.2"
+  }
+}

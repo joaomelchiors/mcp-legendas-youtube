@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+# Resumo da última execução do canário: muda a cada execução.
+canario/
+# Legendas salvas pelo MCP, caso o Claude seja aberto nesta pasta: são do usuário, não do projeto.
+legendas/

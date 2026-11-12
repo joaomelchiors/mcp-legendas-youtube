@@ -1,0 +1,11 @@
+{
+  // Checagem de tipos dos testes (o SWC, que roda os testes, só remove os tipos sem checar).
+  // Não gera arquivos. Uso: npm run tipos:testes
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "types": ["node", "jest"]
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}
