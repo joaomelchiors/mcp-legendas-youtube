@@ -14,7 +14,8 @@
     "test:cobertura": "jest --coverage",
     "tipos:testes": "tsc -p tsconfig.test.json",
     "canario": "npm run build && node dist/canary.js",
-    "instalar": "npm install && npm run build && node dist/install.js"
+    "auditoria": "npm audit --omit=dev --audit-level=high",
+    "instalar": "npm install --no-audit --no-fund && npm run build && npm run auditoria && node dist/install.js"
   },
   "config": {
     "ytDlpVersion": "2026.10.26"

@@ -67,6 +67,10 @@ Não registra o texto da legenda, nem senhas, tokens ou cookies (o MCP não usa 
 
 Os avisos do Jest **não afetam o MCP**: o Jest só roda nos testes, no computador do desenvolvedor, com arquivos do próprio projeto. A "correção" oferecida pelo `npm audit fix --force` seria rebaixar o Jest para a versão 25, muito mais antiga, o que não faz sentido. Decisão: aceitar e rever quando sair uma versão nova do Jest.
 
+O `deepmerge` não tem versão corrigida publicada (a 4.3.1 é a mais nova). Forçar versões novas de `glob` e `minimatch` dentro do Jest (`overrides`) foi avaliado e descartado: tiraria 18 avisos, mas faria o Jest rodar com versões que ele não testou.
+
+**No instalador:** o `npm run instalar` roda o `npm install` sem a auditoria completa (`--no-audit`), para não mostrar como problema de quem instala os avisos das ferramentas de teste. Em seguida, ele roda `npm run auditoria` (`npm audit --omit=dev --audit-level=high`): confere **só o que o MCP executa**, mostra o resultado e **para a instalação** se aparecer uma vulnerabilidade alta ou crítica.
+
 ## 7. Conteúdo do vídeo
 
 Título, canal e legenda são escritos por terceiros. A resposta da ferramenta os coloca entre marcadores, depois de um aviso de que são conteúdo e não instruções. É uma **mitigação**: as outras camadas são o próprio Claude, que trata resultado de ferramenta como informação, e as permissões do Claude Code, que pedem aprovação antes de executar ações.

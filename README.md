@@ -73,15 +73,22 @@ npm run instalar
 Ele faz, em ordem:
 
 1. `npm install` e o build;
-2. cria a pasta privada do MCP, `~/.mcp-legendas-youtube/` (no Windows, `%USERPROFILE%\.mcp-legendas-youtube\`);
-3. baixa do **GitHub oficial do yt-dlp** a versão fixa do projeto e a lista de checksums dessa versão;
-4. **confere o checksum** e só então grava o yt-dlp. Se não conferir, descarta o arquivo e não instala nada;
-5. roda o yt-dlp com `--version` para confirmar;
-6. mostra os **dois comandos de registro** (`user` e `local`), já com o caminho completo.
+2. **confere as dependências que o MCP executa** (`npm audit --omit=dev`) e **para** se houver uma vulnerabilidade alta ou crítica. Hoje o resultado é `found 0 vulnerabilities`;
+3. cria a pasta privada do MCP, `~/.mcp-legendas-youtube/` (no Windows, `%USERPROFILE%\.mcp-legendas-youtube\`);
+4. baixa do **GitHub oficial do yt-dlp** a versão fixa do projeto e a lista de checksums dessa versão;
+5. **confere o checksum** e só então grava o yt-dlp. Se não conferir, descarta o arquivo e não instala nada;
+6. roda o yt-dlp com `--version` para confirmar;
+7. mostra os **dois comandos de registro** (`user` e `local`), já com o caminho completo.
 
 O yt-dlp fica **só nessa pasta privada**. Ele não vai para o PATH nem fica disponível para outros programas.
 
 Se o yt-dlp certo já estiver na pasta, nada é baixado de novo.
+
+**Sobre os avisos do `npm audit`:** se você rodar `npm install` ou `npm audit` por conta própria, o npm mostra avisos (hoje 19: 3 baixos e 16 moderados, nenhum alto ou crítico). Todos estão nas **ferramentas de teste** (Jest), que só rodam no computador de quem desenvolve, com arquivos do próprio projeto. **Nenhum está no que o MCP executa.** A "correção" que o npm oferece seria voltar o Jest para uma versão muito antiga, então eles ficam aceitos até sair uma versão nova do Jest. Para conferir só o que o MCP executa, a qualquer momento:
+
+```bash
+npm run auditoria
+```
 
 ### 3. Registre no Claude Code
 
@@ -218,6 +225,7 @@ npm run build
 - `npm run test:cobertura`: os testes com o relatório de cobertura.
 - `npm run tipos:testes`: confere os tipos dos testes.
 - `npm run build`: compila para `dist/`.
+- `npm run auditoria`: `npm audit` só do que o MCP executa (sem as ferramentas de teste).
 
 Organização do código (`src/`):
 
