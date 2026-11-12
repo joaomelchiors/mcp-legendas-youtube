@@ -2,7 +2,7 @@
 // "publicationDate_title_language_ID.md", e.g. "2007-01-07_do-schools-kill-creativity-sir-ken-robinson-ted_pt-BR_iG9CE55wbtY.md".
 // Only letters, digits, "-" and "_": safe on Windows, Linux and Mac.
 
-import type { Transcript } from '../../domain/getTranscript-usecase.js';
+import type { Transcript } from '../../domain/transcript.js';
 
 export class TranscriptFileName {
   private static readonly MAX_TITLE_LENGTH: number = 60;

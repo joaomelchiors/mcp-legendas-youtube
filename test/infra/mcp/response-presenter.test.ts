@@ -2,7 +2,7 @@
 // Error codes become messages in Portuguese (the domain only has codes).
 
 import { ResponsePresenter } from '../../../src/infra/mcp/response-presenter.js';
-import type { Transcript } from '../../../src/domain/getTranscript-usecase.js';
+import type { Transcript } from '../../../src/domain/transcript.js';
 import { ErrorCode, type ErrorDetails } from '../../../src/domain/shared/errorCode.js';
 import { Result } from '../../../src/domain/shared/result.js';
 import { UntrustedContent } from '../../../src/infra/mcp/untrusted-content.js';

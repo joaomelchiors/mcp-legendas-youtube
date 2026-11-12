@@ -5,7 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { VttReader } from '../../../src/infra/engine/vtt-reader.js';
-import type { TranscriptSegment } from '../../../src/domain/generics-vo.js';
+import type { TranscriptSegment } from '../../../src/domain/transcript.js';
 import { Result } from '../../../src/domain/shared/result.js';
 import { ErrorCode } from '../../../src/domain/shared/errorCode.js';
 

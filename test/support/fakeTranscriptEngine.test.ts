@@ -2,7 +2,9 @@
 // If it lies, every test that depends on it lies too, so it has its own tests.
 
 import type { TranscriptEngine } from '../../src/domain/transcriptEngine-ports.js';
-import { UrlVideo, VideoInfo, type Track, type TranscriptSegment } from '../../src/domain/generics-vo.js';
+import { UrlVideo } from '../../src/domain/urlVideo-vo.js';
+import { VideoInfo } from '../../src/domain/videoInfo-vo.js';
+import type { Track, TranscriptSegment } from '../../src/domain/transcript.js';
 import { Result } from '../../src/domain/shared/result.js';
 import { ErrorCode } from '../../src/domain/shared/errorCode.js';
 import { FakeTranscriptEngine } from './fakeTranscriptEngine.js';

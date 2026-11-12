@@ -3,8 +3,7 @@
 // and the running text with time markers at 10%, 25%, 50%, 75% and 90% of the duration.
 
 import { TranscriptFormatter } from '../../../src/infra/mcp/transcript-formatter.js';
-import type { Transcript } from '../../../src/domain/getTranscript-usecase.js';
-import type { TranscriptSegment } from '../../../src/domain/generics-vo.js';
+import type { Transcript, TranscriptSegment } from '../../../src/domain/transcript.js';
 
 /** One segment every 5 seconds: "s0" at 0s, "s5" at 5s ... up to the given second. */
 function everyFiveSeconds(untilSecond: number): TranscriptSegment[] {

@@ -1,8 +1,7 @@
 // Turns the use case Result into the text the LLM reads (the domain only has codes;
 // the infra layer turns each code into a message). Messages are in Portuguese, for the user.
 
-import type { Transcript } from '../../domain/getTranscript-usecase.js';
-import { TrackName } from '../../domain/generics-vo.js';
+import { TrackName, type Transcript } from '../../domain/transcript.js';
 import { ErrorCode, type AvailableCaptions, type ErrorDetails } from '../../domain/shared/errorCode.js';
 import type { Result } from '../../domain/shared/result.js';
 import { TranscriptFormatter } from './transcript-formatter.js';

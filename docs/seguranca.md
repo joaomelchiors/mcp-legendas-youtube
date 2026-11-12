@@ -20,7 +20,7 @@ Feita em 2026-11-11 com o código aberto, item por item. Versão do projeto: 0.1
 - **Sem shell** (`shell: false`, `src/infra/engine/command-runner.ts:23`): os argumentos chegam ao yt-dlp exatamente como foram montados; nada como `&&`, `|` ou `$VAR` é interpretado.
 - **Argumentos em lista**, montados só por nós (`src/infra/engine/ytDlpArguments-builder.ts`); sempre com `--ignore-config` (nenhum arquivo de configuração do yt-dlp no computador muda o comportamento) e `--no-cache-dir`.
 - **`--` antes da URL** (linhas 28 e 44): nada depois dele é lido como opção.
-- **A URL é remontada a partir do ID** (linha 50), e o ID só passa se tiver exatamente 11 letras, números, `_` ou `-` (`src/domain/generics-vo.ts:14`). O link que o usuário manda nunca chega inteiro ao yt-dlp.
+- **A URL é remontada a partir do ID** (linha 50), e o ID só passa se tiver exatamente 11 letras, números, `_` ou `-` (`src/domain/urlVideo-vo.ts:13`). O link que o usuário manda nunca chega inteiro ao yt-dlp.
 - **Tempo limite** de 90 s por execução; ao passar, o processo é encerrado (`command-runner.ts:29`).
 - O MCP **não acessa a rede** por conta própria: quem fala com o YouTube é só o yt-dlp. O único acesso à rede do nosso código é o do instalador (`npm run instalar`), que baixa do GitHub oficial do yt-dlp a versão fixa e a lista de checksums (`src/infra/install/`).
 
@@ -28,7 +28,7 @@ Feita em 2026-11-11 com o código aberto, item por item. Versão do projeto: 0.1
 
 ## 2. Validação do que chega
 
-- **Idioma que o usuário envia** (o campo `idioma` da ferramenta): vazio, que significa o idioma original, ou um único código (`pt`, `pt-BR`, `zh-Hans`), conferido por `generics-vo.ts:72`. Listas, `all` (linha 101) e códigos terminados em `-orig`, como `en-orig` (linha 102), são **recusados na entrada**.
+- **Idioma que o usuário envia** (o campo `idioma` da ferramenta): vazio, que significa o idioma original, ou um único código (`pt`, `pt-BR`, `zh-Hans`), conferido por `src/domain/language-vo.ts:15`. Listas, `all` (linha 43) e códigos terminados em `-orig`, como `en-orig` (linha 44), são **recusados na entrada**.
 - **Isso não impede o MCP de baixar uma faixa `-orig`.** Quem escolhe a `-orig` é a nossa regra de seleção (`src/domain/trackSelection-service.ts`), nunca o usuário: sem idioma, depois da manual, ela usa a `<idioma original>-orig` (linha 70); com idioma, se não houver manual, usa a `<idioma>-orig` (linha 38). O nome da faixa escolhida vem da própria consulta ao YouTube e ainda passa pela validação do item abaixo.
 - **Nome da faixa** enviado ao yt-dlp: só letras, números e hífens (`ytDlpArguments-builder.ts:19`); qualquer outra coisa é recusada antes de executar.
 

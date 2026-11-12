@@ -2,7 +2,8 @@
 // canario/ultima-execucao.json to compare with the fixture info-ted.json when something changes.
 // The summary has no URL: only what the MCP reads from the consultation.
 
-import { TrackName, type VideoInfo } from '../../domain/generics-vo.js';
+import { TrackName } from '../../domain/transcript.js';
+import type { VideoInfo } from '../../domain/videoInfo-vo.js';
 import { Canary, type CanaryReport, type CanaryStep } from './canary.js';
 import { Project } from '../project.js';
 

@@ -3,8 +3,8 @@
 // Time markers at 10%, 25%, 50%, 75% and 90% of the duration, each one opening the block of the
 // first segment that starts at or after its point.
 
-import type { Transcript } from './getTranscript-usecase.js';
-import { UrlVideo, type TranscriptSegment } from './generics-vo.js';
+import type { Transcript, TranscriptSegment } from './transcript.js';
+import { UrlVideo } from './urlVideo-vo.js';
 
 /** One line of the header, e.g. { label: 'Canal', value: 'TED' }. The title is not a field. */
 export interface HeaderField {

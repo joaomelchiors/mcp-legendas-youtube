@@ -4,7 +4,9 @@
 // Video data comes from consultations of real videos.
 
 import { TrackSelection, type TrackPlan } from '../../src/domain/trackSelection-service.js';
-import { Language, VideoInfo, type Track } from '../../src/domain/generics-vo.js';
+import { Language } from '../../src/domain/language-vo.js';
+import { VideoInfo } from '../../src/domain/videoInfo-vo.js';
+import type { Track } from '../../src/domain/transcript.js';
 import { Result } from '../../src/domain/shared/result.js';
 import { ErrorCode } from '../../src/domain/shared/errorCode.js';
 

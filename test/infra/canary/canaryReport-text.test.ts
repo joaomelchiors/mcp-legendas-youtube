@@ -3,7 +3,7 @@
 
 import { CanaryReportText } from '../../../src/infra/canary/canaryReport-text.js';
 import type { CanaryReport, CanaryStep } from '../../../src/infra/canary/canary.js';
-import { VideoInfo } from '../../../src/domain/generics-vo.js';
+import { VideoInfo } from '../../../src/domain/videoInfo-vo.js';
 
 const OK_STEPS: CanaryStep[] = [
   { name: 'versão do yt-dlp', isOk: true, detail: '2026.10.26', seconds: 0.42 },

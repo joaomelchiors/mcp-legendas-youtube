@@ -2,7 +2,7 @@
 // "publicationDate_title_language_ID.md". Title without accents, lowercase, hyphens, at most 60 letters.
 
 import { TranscriptFileName } from '../../../src/infra/storage/transcriptFile-name.js';
-import type { Transcript } from '../../../src/domain/getTranscript-usecase.js';
+import type { Transcript } from '../../../src/domain/transcript.js';
 
 const TED: Transcript = {
   videoId: 'iG9CE55wbtY',

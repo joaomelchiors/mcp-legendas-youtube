@@ -4,7 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { VideoInfoParser } from '../../../src/infra/engine/videoInfo-parser.js';
-import type { VideoInfo } from '../../../src/domain/generics-vo.js';
+import type { VideoInfo } from '../../../src/domain/videoInfo-vo.js';
 import { Result } from '../../../src/domain/shared/result.js';
 import { ErrorCode } from '../../../src/domain/shared/errorCode.js';
 

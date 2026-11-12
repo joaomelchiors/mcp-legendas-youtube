@@ -2,7 +2,7 @@
 // Only the title is required. Any other field that is missing or has an unexpected shape
 // becomes null or an empty list: a missing date must not stop the user from getting the caption.
 
-import { VideoInfo } from '../../domain/generics-vo.js';
+import { VideoInfo } from '../../domain/videoInfo-vo.js';
 import { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
 

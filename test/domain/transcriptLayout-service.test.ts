@@ -2,8 +2,7 @@
 // (the text of the response and the Markdown file). Each format only decides HOW to write it.
 
 import { TranscriptLayout, type LayoutBlock, type HeaderField } from '../../src/domain/transcriptLayout-service.js';
-import type { Transcript } from '../../src/domain/getTranscript-usecase.js';
-import type { TranscriptSegment } from '../../src/domain/generics-vo.js';
+import type { Transcript, TranscriptSegment } from '../../src/domain/transcript.js';
 
 function everyFiveSeconds(untilSecond: number): TranscriptSegment[] {
   const segments: TranscriptSegment[] = [];

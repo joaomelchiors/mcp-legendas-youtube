@@ -6,7 +6,8 @@
 // the file path. If the save fails, the transcript still comes, with a warning in place of the path.
 
 import type { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js';
-import type { GetTranscript, Transcript } from '../../domain/getTranscript-usecase.js';
+import type { GetTranscript } from '../../domain/getTranscript-usecase.js';
+import type { Transcript } from '../../domain/transcript.js';
 import { Result } from '../../domain/shared/result.js';
 import { ResponsePresenter } from './response-presenter.js';
 import { TranscriptMarkdown } from './transcript-markdown.js';

@@ -9,7 +9,9 @@
 // No language: the original language of the video, manual first, then "<language>-orig".
 // Before all that: a live stream in progress has no caption yet (LIVE_IN_PROGRESS).
 
-import { Language, TrackName, VideoInfo, type Track } from './generics-vo.js';
+import { Language } from './language-vo.js';
+import { TrackName, type Track } from './transcript.js';
+import { VideoInfo } from './videoInfo-vo.js';
 import { Result } from './shared/result.js';
 import { ErrorCode } from './shared/errorCode.js';
 

@@ -2,7 +2,7 @@
 // Title as "#", header as a list, running text, time markers as "## [10% - 02:00]".
 
 import { TranscriptMarkdown } from '../../../src/infra/mcp/transcript-markdown.js';
-import type { Transcript } from '../../../src/domain/getTranscript-usecase.js';
+import type { Transcript } from '../../../src/domain/transcript.js';
 
 const SMALL: Transcript = {
   videoId: 'iG9CE55wbtY',

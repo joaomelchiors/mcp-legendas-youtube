@@ -4,7 +4,9 @@
 // Anything not configured fails loudly, so a test never calls the engine by accident.
 
 import type { TranscriptEngine } from '../../src/domain/transcriptEngine-ports.js';
-import type { Track, TranscriptSegment, UrlVideo, VideoInfo } from '../../src/domain/generics-vo.js';
+import type { Track, TranscriptSegment } from '../../src/domain/transcript.js';
+import type { UrlVideo } from '../../src/domain/urlVideo-vo.js';
+import type { VideoInfo } from '../../src/domain/videoInfo-vo.js';
 import type { Result } from '../../src/domain/shared/result.js';
 
 export interface FakeEngineConfig {

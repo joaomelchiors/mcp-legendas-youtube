@@ -2,7 +2,7 @@
 // "Título: ...", one "Campo: valor" line per header field, "Aviso: ..." when it is a fallback,
 // then the running text with the markers as "[10% - 02:00]".
 
-import type { Transcript } from '../../domain/getTranscript-usecase.js';
+import type { Transcript } from '../../domain/transcript.js';
 import { TranscriptLayout, type HeaderField, type LayoutBlock } from '../../domain/transcriptLayout-service.js';
 
 export class TranscriptFormatter {

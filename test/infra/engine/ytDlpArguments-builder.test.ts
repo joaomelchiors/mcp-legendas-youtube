@@ -3,7 +3,8 @@
 // one exact track name, never a list or a pattern; "--" before the URL.
 
 import { YtDlpArgumentsBuilder } from '../../../src/infra/engine/ytDlpArguments-builder.js';
-import { UrlVideo, type Track } from '../../../src/domain/generics-vo.js';
+import { UrlVideo } from '../../../src/domain/urlVideo-vo.js';
+import type { Track } from '../../../src/domain/transcript.js';
 import { Result } from '../../../src/domain/shared/result.js';
 import { ErrorCode } from '../../../src/domain/shared/errorCode.js';
 

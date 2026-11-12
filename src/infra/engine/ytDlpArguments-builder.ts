@@ -4,7 +4,8 @@
 //   - one exact track name, never a list or a pattern (they asked for many captions and got 429);
 //   - "--" before the URL, so nothing after it is read as an option.
 
-import type { Track, UrlVideo } from '../../domain/generics-vo.js';
+import type { Track } from '../../domain/transcript.js';
+import type { UrlVideo } from '../../domain/urlVideo-vo.js';
 import { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
 

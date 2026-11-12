@@ -6,26 +6,13 @@
 //   4. domain   -> TrackPlan    (TrackSelection: the exact track, and a fallback when it is a translation)
 //   5. engine   -> segments     (download the preferred track; if it fails and there is a fallback, the fallback)
 
-import { Language, UrlVideo, VideoInfo, type Track, type TrackKind, type TranscriptSegment } from './generics-vo.js';
+import { Language } from './language-vo.js';
+import { UrlVideo } from './urlVideo-vo.js';
+import { VideoInfo } from './videoInfo-vo.js';
+import type { Track, Transcript, TranscriptSegment } from './transcript.js';
 import { TrackSelection, type TrackPlan } from './trackSelection-service.js';
 import type { TranscriptEngine } from './transcriptEngine-ports.js';
 import { Result } from './shared/result.js';
-
-export interface Transcript {
-  readonly videoId: string;
-  readonly title: string;
-  readonly channel: string | null;
-  /** "YYYY-MM-DD". */
-  readonly uploadDate: string | null;
-  readonly durationSeconds: number | null;
-  /** Name of the downloaded track (e.g. "pt-BR", "pt-orig"). */
-  readonly language: string;
-  /** manual: "legenda revisada"; automatic: "gerada automaticamente". */
-  readonly kind: TrackKind;
-  readonly segments: readonly TranscriptSegment[];
-  /** True when the requested translation failed and the original language came instead. */
-  readonly isOriginalFallback: boolean;
-}
 
 export class GetTranscript {
   constructor(private readonly engine: TranscriptEngine) {}

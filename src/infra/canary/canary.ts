@@ -5,7 +5,9 @@
 //   3. download of the manual pt-BR (hundreds of segments with text).
 // Only two runs of yt-dlp touch YouTube (2 and 3). It runs only when João asks (npm run canario).
 
-import { UrlVideo, VideoInfo, type Track, type TranscriptSegment } from '../../domain/generics-vo.js';
+import { UrlVideo } from '../../domain/urlVideo-vo.js';
+import { VideoInfo } from '../../domain/videoInfo-vo.js';
+import type { Track, TranscriptSegment } from '../../domain/transcript.js';
 import type { TranscriptEngine } from '../../domain/transcriptEngine-ports.js';
 import type { Result } from '../../domain/shared/result.js';
 import type { ErrorCode } from '../../domain/shared/errorCode.js';

@@ -3,7 +3,8 @@
 // No network here: a fake engine that also answers the yt-dlp version.
 
 import { Canary, type CanaryEngine, type CanaryReport } from '../../../src/infra/canary/canary.js';
-import { VideoInfo, type TranscriptSegment } from '../../../src/domain/generics-vo.js';
+import { VideoInfo } from '../../../src/domain/videoInfo-vo.js';
+import type { TranscriptSegment } from '../../../src/domain/transcript.js';
 import { Result } from '../../../src/domain/shared/result.js';
 import { ErrorCode } from '../../../src/domain/shared/errorCode.js';
 import { FakeTranscriptEngine, type FakeEngineConfig } from '../../support/fakeTranscriptEngine.js';

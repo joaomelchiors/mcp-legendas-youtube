@@ -5,7 +5,7 @@
 // Automatic captions are "rolling": each cue repeats the previous line and adds a new one, with
 // word-by-word tags (<00:00:26.720><c> morning</c>). So a line only counts the first time it appears.
 
-import type { TranscriptSegment } from '../../domain/generics-vo.js';
+import type { TranscriptSegment } from '../../domain/transcript.js';
 import { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
 

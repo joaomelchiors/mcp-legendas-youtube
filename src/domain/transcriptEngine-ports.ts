@@ -3,7 +3,9 @@
 // Changing the engine means writing another class that implements this interface.
 // An engine never throws for an expected problem: it returns Result.fail(ErrorCode).
 
-import type { Track, TranscriptSegment, UrlVideo, VideoInfo } from './generics-vo.js';
+import type { Track, TranscriptSegment } from './transcript.js';
+import type { UrlVideo } from './urlVideo-vo.js';
+import type { VideoInfo } from './videoInfo-vo.js';
 import type { Result } from './shared/result.js';
 
 export interface TranscriptEngine {

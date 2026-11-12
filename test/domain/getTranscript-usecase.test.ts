@@ -3,8 +3,9 @@
 // -> download it (segments with time); when the preferred track is a translation and its download
 // fails, download the fallback (best of the original language) and say so. The engine is the fake one.
 
-import { GetTranscript, type Transcript } from '../../src/domain/getTranscript-usecase.js';
-import { VideoInfo, type TranscriptSegment } from '../../src/domain/generics-vo.js';
+import { GetTranscript } from '../../src/domain/getTranscript-usecase.js';
+import type { Transcript, TranscriptSegment } from '../../src/domain/transcript.js';
+import { VideoInfo } from '../../src/domain/videoInfo-vo.js';
 import { Result } from '../../src/domain/shared/result.js';
 import { ErrorCode } from '../../src/domain/shared/errorCode.js';
 import { FakeTranscriptEngine, type FakeEngineConfig } from '../support/fakeTranscriptEngine.js';

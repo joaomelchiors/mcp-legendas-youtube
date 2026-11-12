@@ -2,7 +2,7 @@
 // "# title", the header fields as a list, a quoted warning when it is a fallback,
 // then the running text with the markers as subtitles "## [10% - 02:00]". Ends with one line break.
 
-import type { Transcript } from '../../domain/getTranscript-usecase.js';
+import type { Transcript } from '../../domain/transcript.js';
 import { TranscriptLayout, type HeaderField, type LayoutBlock } from '../../domain/transcriptLayout-service.js';
 
 export class TranscriptMarkdown {
