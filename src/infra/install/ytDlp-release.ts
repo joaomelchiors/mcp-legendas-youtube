@@ -28,11 +28,6 @@ export class YtDlpRelease {
     return Result.ok<string>(asset);
   }
 
-  /** The name in the private folder: the one YtDlpExecutableLocator looks for. */
-  static installedName(platform: NodeJS.Platform): string {
-    return platform === 'win32' ? 'yt-dlp.exe' : 'yt-dlp';
-  }
-
   static url(version: string, file: string): string {
     return `${YtDlpRelease.BASE_URL}/${version}/${file}`;
   }

@@ -68,13 +68,3 @@ describe('YtDlpExecutableLocator.whereItLooked (for the log when yt-dlp is not f
     expect(YtDlpExecutableLocator.whereItLooked({})).toMatch(/pasta privada do MCP: ".*\.mcp-legendas-youtube/);
   });
 });
-
-describe('YtDlpExecutableLocator.privateFolder (where the installer puts yt-dlp)', () => {
-  test('~/.mcp-legendas-youtube', () => {
-    expect(YtDlpExecutableLocator.privateFolder(HOME)).toBe(join(HOME, '.mcp-legendas-youtube'));
-  });
-
-  test('by default it uses the real home folder', () => {
-    expect(YtDlpExecutableLocator.privateFolder()).toMatch(/\.mcp-legendas-youtube$/);
-  });
-});

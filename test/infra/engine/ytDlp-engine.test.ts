@@ -10,7 +10,7 @@ import { UrlVideo, VideoInfo, type Track, type TranscriptSegment } from '../../.
 import { Result } from '../../../src/domain/shared/result.js';
 import { ErrorCode } from '../../../src/domain/shared/errorCode.js';
 import { FakeCommandRunner, finished, type CommandHandler } from '../../support/fakeCommandRunner.js';
-import type { CommandResult } from '../../../src/infra/engine/command-runner.js';
+import type { CommandResult } from '../../../src/infra/process/command-runner.js';
 
 const VIDEO: UrlVideo = UrlVideo.tryCreate('iG9CE55wbtY').instance;
 const MANUAL_EN: Track = { language: 'en', kind: 'manual' };

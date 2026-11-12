@@ -1,7 +1,7 @@
 // Tests for NodeCommandRunner: runs a program WITHOUT shell, with a time limit.
 // The program here is Node itself (process.execPath): no yt-dlp, no network.
 
-import { NodeCommandRunner, type CommandResult } from '../../../src/infra/engine/command-runner.js';
+import { NodeCommandRunner, type CommandResult } from '../../../src/infra/process/command-runner.js';
 
 const NODE: string = process.execPath;
 const runner: NodeCommandRunner = new NodeCommandRunner();

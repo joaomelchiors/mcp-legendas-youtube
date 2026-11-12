@@ -1,4 +1,4 @@
-// Runs an external program. The interface lets the engine be tested with a fake runner.
+// Runs an external program (today yt-dlp, for the engine and for the installer). The interface lets both be tested with a fake runner.
 // NodeCommandRunner runs WITHOUT a shell: the arguments reach the program exactly as given,
 // nothing is interpreted (no "&&", no "$VAR"). On Windows this finds ".exe", not ".cmd".
 

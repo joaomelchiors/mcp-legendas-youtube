@@ -43,16 +43,6 @@ describe('YtDlpRelease.assetFor: the official file of each system', () => {
   });
 });
 
-describe('YtDlpRelease.installedName: the name in the private folder (the one the MCP looks for)', () => {
-  test('Windows: yt-dlp.exe, whatever the processor', () => {
-    expect(YtDlpRelease.installedName('win32')).toBe('yt-dlp.exe');
-  });
-
-  test.each(['linux', 'darwin'])('%s: yt-dlp', (platform: string) => {
-    expect(YtDlpRelease.installedName(platform as NodeJS.Platform)).toBe('yt-dlp');
-  });
-});
-
 describe('YtDlpRelease.url: always the official GitHub, always the fixed version', () => {
   test('the executable', () => {
     expect(YtDlpRelease.url('2026.10.26', 'yt-dlp.exe')).toBe('https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/yt-dlp.exe');

@@ -12,11 +12,12 @@ import { chmod, mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path';
 import { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
-import type { CommandResult, CommandRunner } from '../engine/command-runner.js';
+import type { CommandResult, CommandRunner } from '../process/command-runner.js';
 import { YtDlpArgumentsBuilder } from '../engine/ytDlpArguments-builder.js';
 import type { Downloader } from './fetch-downloader.js';
 import { Sha256Sums } from './sha256-sums.js';
 import { YtDlpRelease } from './ytDlp-release.js';
+import { YtDlpPrivateFolder } from '../ytdlp/ytDlpPrivate-folder.js';
 
 export interface InstallReport {
   /** Full path of the installed yt-dlp. */
@@ -45,7 +46,7 @@ export class YtDlpInstaller {
     const expectedReturn: Result<string> = await this.expectedChecksum(version, assetReturn.instance);
     if (expectedReturn.isFailure) return expectedReturn.propagate<InstallReport>();
 
-    const path: string = join(this.folder, YtDlpRelease.installedName(this.platform));
+    const path: string = join(this.folder, YtDlpPrivateFolder.executableName(this.platform));
     const isInstalled: boolean = await YtDlpInstaller.hasChecksum(path, expectedReturn.instance);
     if (!isInstalled) {
       const savedReturn: Result<string> = await this.downloadAndSave(version, assetReturn.instance, path, expectedReturn.instance);

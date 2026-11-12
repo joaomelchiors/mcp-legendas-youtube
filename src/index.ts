@@ -7,7 +7,7 @@ import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { GetTranscript } from './domain/getTranscript-usecase.js';
 import type { TranscriptEngine } from './domain/transcriptEngine-ports.js';
 import { Result } from './domain/shared/result.js';
-import { NodeCommandRunner } from './infra/engine/command-runner.js';
+import { NodeCommandRunner } from './infra/process/command-runner.js';
 import { YtDlpEngine } from './infra/engine/ytDlp-engine.js';
 import { YtDlpExecutableLocator } from './infra/engine/ytDlpExecutable-locator.js';
 import { GetTranscriptTool } from './infra/mcp/getTranscript-tool.js';

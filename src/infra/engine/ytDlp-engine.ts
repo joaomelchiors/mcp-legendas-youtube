@@ -10,7 +10,7 @@ import type { TranscriptEngine } from '../../domain/transcriptEngine-ports.js';
 import type { Track, TranscriptSegment, UrlVideo, VideoInfo } from '../../domain/generics-vo.js';
 import { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
-import type { CommandResult, CommandRunner } from './command-runner.js';
+import type { CommandResult, CommandRunner } from '../process/command-runner.js';
 import { YtDlpArgumentsBuilder } from './ytDlpArguments-builder.js';
 import { VideoInfoParser } from './videoInfo-parser.js';
 import { YtDlpOutputReader } from './ytDlpOutput-reader.js';

@@ -6,8 +6,8 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { Result } from './domain/shared/result.js';
-import { NodeCommandRunner } from './infra/engine/command-runner.js';
-import { YtDlpExecutableLocator } from './infra/engine/ytDlpExecutable-locator.js';
+import { NodeCommandRunner } from './infra/process/command-runner.js';
+import { YtDlpPrivateFolder } from './infra/ytdlp/ytDlpPrivate-folder.js';
 import { FetchDownloader } from './infra/install/fetch-downloader.js';
 import { InstallReportText } from './infra/install/installReport-text.js';
 import { RegistrationCommand, type RegistrationCommands } from './infra/install/registration-command.js';
@@ -32,7 +32,7 @@ function fixedVersion(): string {
 
 async function start(): Promise<void> {
   const version: string = fixedVersion();
-  const folder: string = YtDlpExecutableLocator.privateFolder();
+  const folder: string = YtDlpPrivateFolder.path();
   process.stdout.write(`Instalando o yt-dlp ${version} em ${folder}\n`);
 
   const installer: YtDlpInstaller = new YtDlpInstaller(

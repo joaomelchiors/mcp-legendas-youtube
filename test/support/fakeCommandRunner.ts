@@ -2,7 +2,7 @@
 // No process, no network. Each call is answered by the handler the test gives,
 // which can also write a file (as yt-dlp would write the caption). Every call is recorded.
 
-import type { CommandResult, CommandRunner } from '../../src/infra/engine/command-runner.js';
+import type { CommandResult, CommandRunner } from '../../src/infra/process/command-runner.js';
 
 export interface RecordedCommand {
   readonly executable: string;
