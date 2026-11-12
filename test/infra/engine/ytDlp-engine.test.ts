@@ -13,6 +13,7 @@ import { Result } from '../../../src/domain/shared/result.js';
 import { ErrorCode } from '../../../src/domain/shared/errorCode.js';
 import { FakeCommandRunner, finished, type CommandHandler } from '../../support/fakeCommandRunner.js';
 import type { CommandResult } from '../../../src/infra/process/command-runner.js';
+import { silenceStderr } from '../../support/silentLog.js';
 
 const VIDEO: UrlVideo = UrlVideo.tryCreate('iG9CE55wbtY').instance;
 const MANUAL_EN: Track = { language: 'en', kind: 'manual' };
@@ -41,7 +42,7 @@ function writesCaption(vtt: string, stdout: string = '[info] Writing video subti
 }
 
 beforeEach(() => {
-  jest.spyOn(process.stderr, 'write').mockImplementation(() => true);
+  silenceStderr();
 });
 
 describe('YtDlpEngine implements the port', () => {
@@ -89,7 +90,7 @@ describe('getVideoInfo (the consultation)', () => {
   });
 
   test('the ERROR lines go to the log, the warnings do not', async () => {
-    const stderr: jest.SpyInstance = jest.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    const stderr: jest.SpyInstance = silenceStderr();
     const { engine } = engineWith(() => finished(1, '', fixture('ytdlp', 'erro-429.stderr.txt')));
     await engine.getVideoInfo(VIDEO);
     const lines: string = stderr.mock.calls.map((call: unknown[]) => String(call[0])).join('');
@@ -133,7 +134,7 @@ describe('downloadTrack (one exact track)', () => {
   });
 
   test('exit 0, no file and no explanation: ENGINE_OUTPUT, and the log says no file was written', async () => {
-    const stderr: jest.SpyInstance = jest.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    const stderr: jest.SpyInstance = silenceStderr();
     const { engine } = engineWith(() => finished(0, ''));
     expect((await engine.downloadTrack(VIDEO, MANUAL_EN)).errors).toEqual([ErrorCode.ENGINE_OUTPUT]);
     expect(stderr).toHaveBeenCalledWith(expect.stringMatching(/nenhum arquivo gravado/));

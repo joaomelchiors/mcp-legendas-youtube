@@ -1,7 +1,7 @@
 // Result pattern (João's code, adapted to this project).
 // A method that can fail returns Result<T>: either the instance, or a list of error codes.
 // Adaptations: an error is only an ErrorCode (no createError); an exception caught by
-// try/trySync becomes UNEXPECTED, and the exception itself is kept in `cause` for the log.
+// try becomes UNEXPECTED, and the exception itself is kept in `cause` for the log.
 // A failure may also carry `details` (e.g. the available captions).
 
 import { ErrorCode, type ErrorDetails } from './errorCode.js';
@@ -39,21 +39,6 @@ export class Result<InstanceType> {
     }
   }
 
-  /** Runs a sync function; its value becomes ok, an exception becomes UNEXPECTED. */
-  static trySync<InstanceType>(fn: () => InstanceType): Result<InstanceType> {
-    try {
-      return Result.ok<InstanceType>(fn());
-    } catch (e: unknown) {
-      return Result.failWithCause<InstanceType>(ErrorCode.UNEXPECTED, e);
-    }
-  }
-
-  throwIfFailed(): never | void {
-    if (this.isFailure) {
-      throw this.errors;
-    }
-  }
-
   /** Only meaningful when isOk. On a failure it is undefined: always check isFailure first. */
   get instance(): InstanceType {
     return this._instance!;
@@ -67,7 +52,7 @@ export class Result<InstanceType> {
     return this._errors;
   }
 
-  /** The exception caught by try/trySync, for the log. Undefined otherwise. */
+  /** What caused the failure (the exception caught by try, or a text), for the log. Undefined otherwise. */
   get cause(): unknown {
     return this._cause;
   }
@@ -91,33 +76,5 @@ export class Result<InstanceType> {
    */
   propagate<OtherType>(): Result<OtherType> {
     return new Result<OtherType>(undefined, this.errors, this._cause, this._details);
-  }
-
-  static combine<const R extends readonly Result<any>[]>(
-    results: R,
-  ): Result<{ [K in keyof R]: R[K] extends Result<infer T> ? T : never }> {
-    const errors: Result<any>[] = results.filter((r: Result<any>) => r.isFailure);
-    if (errors.length) {
-      return Result.fail(errors.flatMap((r: Result<any>) => r.errors!));
-    }
-
-    const instances = results.map((r: Result<any>) => r._instance) as unknown as {
-      [K in keyof R]: R[K] extends Result<infer T> ? T : never;
-    };
-
-    return Result.ok(instances);
-  }
-
-  static async combineAsync<T>(results: Promise<Result<T>>[]): Promise<Result<T[]>> {
-    const rs: Result<T>[] = await Promise.all(results);
-    return Result.combine(rs);
-  }
-
-  toString(): string {
-    if (this.isOk) {
-      return `Result.ok(${JSON.stringify(this._instance)})`;
-    } else {
-      return `Result.fail(${JSON.stringify(this._errors)})`;
-    }
   }
 }

@@ -63,43 +63,6 @@ describe('Result.try (async)', () => {
   });
 });
 
-describe('Result.trySync', () => {
-  test('wraps the value returned by the function in an ok', () => {
-    const result: Result<number> = Result.trySync<number>(() => 7);
-    expect(result.isOk).toBe(true);
-    expect(result.instance).toBe(7);
-  });
-
-  test('an exception becomes UNEXPECTED, and the original exception is kept as cause', () => {
-    const failure: Error = new Error('boom');
-    const result: Result<number> = Result.trySync<number>(() => {
-      throw failure;
-    });
-    expect(result.errors).toEqual([ErrorCode.UNEXPECTED]);
-    expect(result.cause).toBe(failure);
-  });
-
-  test('a result without exception has no cause', () => {
-    expect(Result.trySync<number>(() => 1).cause).toBeUndefined();
-  });
-});
-
-describe('throwIfFailed', () => {
-  test('does nothing when ok', () => {
-    expect(() => Result.ok<number>(1).throwIfFailed()).not.toThrow();
-  });
-
-  test('throws the errors list when failed', () => {
-    let thrown: unknown;
-    try {
-      Result.fail<number>(ErrorCode.INVALID_URL).throwIfFailed();
-    } catch (e: unknown) {
-      thrown = e;
-    }
-    expect(thrown).toEqual([ErrorCode.INVALID_URL]);
-  });
-});
-
 describe('Result.failWithCause: a failure that keeps what caused it, for the log', () => {
   test('keeps the code and the cause', () => {
     const cause: Error = new Error('EACCES: permissão negada');
@@ -142,52 +105,6 @@ describe('propagate: the same failure, returned as a Result of another type', ()
     });
     expect(caught.propagate<string>().cause).toBe(cause);
     expect(caught.propagate<string>().errors).toEqual([ErrorCode.UNEXPECTED]);
-  });
-});
-
-describe('Result.combine', () => {
-  test('all ok: one ok with the instances in the same order', () => {
-    const combined: Result<readonly [number, string]> = Result.combine([Result.ok<number>(1), Result.ok<string>('a')] as const);
-    expect(combined.isOk).toBe(true);
-    expect(combined.instance).toEqual([1, 'a']);
-  });
-
-  test('some failed: one failure with all errors of the failures, in order', () => {
-    const combined: Result<readonly [number, string, boolean]> = Result.combine([
-      Result.fail<number>(ErrorCode.INVALID_URL),
-      Result.ok<string>('a'),
-      Result.fail<boolean>(ErrorCode.INVALID_LANGUAGE),
-    ] as const);
-    expect(combined.isFailure).toBe(true);
-    expect(combined.errors).toEqual([ErrorCode.INVALID_URL, ErrorCode.INVALID_LANGUAGE]);
-  });
-});
-
-describe('Result.combineAsync', () => {
-  test('waits for all and combines them', async () => {
-    const combined: Result<number[]> = await Result.combineAsync<number>([
-      Promise.resolve(Result.ok<number>(1)),
-      Promise.resolve(Result.ok<number>(2)),
-    ]);
-    expect(combined.instance).toEqual([1, 2]);
-  });
-
-  test('a failure among them makes the combination fail', async () => {
-    const combined: Result<number[]> = await Result.combineAsync<number>([
-      Promise.resolve(Result.ok<number>(1)),
-      Promise.resolve(Result.fail<number>(ErrorCode.UNEXPECTED)),
-    ]);
-    expect(combined.errors).toEqual([ErrorCode.UNEXPECTED]);
-  });
-});
-
-describe('toString', () => {
-  test('ok shows the instance', () => {
-    expect(Result.ok<{ id: string }>({ id: 'x' }).toString()).toBe('Result.ok({"id":"x"})');
-  });
-
-  test('failure shows the codes', () => {
-    expect(Result.fail<number>(ErrorCode.INVALID_URL).toString()).toBe('Result.fail(["INVALID_URL"])');
   });
 });
 

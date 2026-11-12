@@ -35,7 +35,9 @@ export enum ErrorCode {
   // Saving the transcript file
   FILE_WRITE_FAILED = 'FILE_WRITE_FAILED',
 
-  // Installer (npm run instalar): only happen while installing yt-dlp, never while getting a caption
+  // Installer (npm run instalar): only happen while installing yt-dlp, never while getting a caption.
+  // Kept here on purpose: Result only carries ErrorCode, and a separate InstallErrorCode would make Result
+  // generic in the code type. Five codes do not pay for that; revisit only if the installer grows.
   UNSUPPORTED_SYSTEM = 'UNSUPPORTED_SYSTEM',
   DOWNLOAD_FAILED = 'DOWNLOAD_FAILED',
   CHECKSUM_NOT_LISTED = 'CHECKSUM_NOT_LISTED',

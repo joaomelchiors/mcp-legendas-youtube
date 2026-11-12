@@ -6,21 +6,16 @@ import type { Transcript } from '../../../src/domain/transcript.js';
 import { ErrorCode, type ErrorDetails } from '../../../src/domain/shared/errorCode.js';
 import { Result } from '../../../src/domain/shared/result.js';
 import { UntrustedContent } from '../../../src/infra/mcp/untrusted-content.js';
+import { aTranscript } from '../../support/sampleTranscript.js';
 
-const MANUAL: Transcript = {
-  videoId: 'iG9CE55wbtY',
-  title: 'Do schools kill creativity? | Sir Ken Robinson | TED',
-  channel: 'TED',
+const MANUAL: Transcript = aTranscript({
   uploadDate: '2007-01-06',
   durationSeconds: 1203,
-  language: 'pt-BR',
-  kind: 'manual',
   segments: [
     { startSeconds: 27.1, text: 'Bom dia.' },
     { startSeconds: 29.7, text: 'Como vão?' },
   ],
-  isOriginalFallback: false,
-};
+});
 
 describe('success', () => {
   test('manual: title, language, "legenda revisada" and the text of the segments, in order', () => {

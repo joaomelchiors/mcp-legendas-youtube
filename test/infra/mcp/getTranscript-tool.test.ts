@@ -16,6 +16,7 @@ import { Result } from '../../../src/domain/shared/result.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { FakeTranscriptEngine, type FakeEngineConfig } from '../../support/fakeTranscriptEngine.js';
 import { FolderFileWriter } from '../../../src/infra/storage/folderFile-writer.js';
+import { silenceStderr } from '../../support/silentLog.js';
 
 const TED_URL: string = 'https://www.youtube.com/watch?v=iG9CE55wbtY';
 const TED: VideoInfo = new VideoInfo('TED talk', 'en', ['en'], ['en-orig']);
@@ -39,7 +40,7 @@ function textOf(result: CallToolResult): string {
 
 let stderr: jest.SpyInstance;
 beforeEach(() => {
-  stderr = jest.spyOn(process.stderr, 'write').mockImplementation(() => true);
+  stderr = silenceStderr();
   sandbox = mkdtempSync(join(tmpdir(), 'mcp-legendas-teste-'));
   legendas = join(sandbox, 'legendas');
 });

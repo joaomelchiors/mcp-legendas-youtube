@@ -3,23 +3,16 @@
 
 import { TranscriptMarkdown } from '../../../src/infra/mcp/transcript-markdown.js';
 import type { Transcript } from '../../../src/domain/transcript.js';
+import { aTranscript } from '../../support/sampleTranscript.js';
 
-const SMALL: Transcript = {
-  videoId: 'iG9CE55wbtY',
-  title: 'Do schools kill creativity? | Sir Ken Robinson | TED',
-  channel: 'TED',
-  uploadDate: '2007-01-07',
-  durationSeconds: 100,
-  language: 'pt-BR',
-  kind: 'manual',
+const SMALL: Transcript = aTranscript({
   segments: [
     { startSeconds: 0, text: 'Bom dia.' },
     { startSeconds: 5, text: 'Como estão?' },
     { startSeconds: 30, text: 'Existem três temas.' },
     { startSeconds: 95, text: 'Obrigado.' },
   ],
-  isOriginalFallback: false,
-};
+});
 
 describe('TranscriptMarkdown.format', () => {
   test('the whole file, exactly', () => {

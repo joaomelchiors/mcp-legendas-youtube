@@ -11,7 +11,7 @@ import type { Track, TranscriptSegment } from '../../domain/transcript.js';
 import type { TranscriptEngine } from '../../domain/transcriptEngine-ports.js';
 import type { Result } from '../../domain/shared/result.js';
 import type { ErrorCode } from '../../domain/shared/errorCode.js';
-import { ResponsePresenter } from '../mcp/response-presenter.js';
+import { ErrorMessages } from '../error-messages.js';
 
 /** The MCP engine plus the yt-dlp version, which only the canary needs (it is not part of the port). */
 export interface CanaryEngine extends TranscriptEngine {
@@ -109,7 +109,8 @@ export class Canary {
 
   /** The code (for whoever looks for it in the code and the guide) and the message the MCP would show. */
   private static errorDetail(errors: ErrorCode[]): string {
-    return `${errors.join(', ')}: ${ResponsePresenter.failure(errors, undefined)}`;
+    const messages: string[] = errors.map((code: ErrorCode) => ErrorMessages.of(code));
+    return `${errors.join(', ')}: ${messages.join('\n')}`;
   }
 
   private static lastFailed(steps: readonly CanaryStep[]): boolean {

@@ -3,26 +3,11 @@
 // and the running text with time markers at 10%, 25%, 50%, 75% and 90% of the duration.
 
 import { TranscriptFormatter } from '../../../src/infra/mcp/transcript-formatter.js';
-import type { Transcript, TranscriptSegment } from '../../../src/domain/transcript.js';
+import type { Transcript } from '../../../src/domain/transcript.js';
+import { aTranscript, everyFiveSeconds } from '../../support/sampleTranscript.js';
 
 /** One segment every 5 seconds: "s0" at 0s, "s5" at 5s ... up to the given second. */
-function everyFiveSeconds(untilSecond: number): TranscriptSegment[] {
-  const segments: TranscriptSegment[] = [];
-  for (let second: number = 0; second <= untilSecond; second += 5) segments.push({ startSeconds: second, text: `s${second}` });
-  return segments;
-}
-
-const BASE: Transcript = {
-  videoId: 'iG9CE55wbtY',
-  title: 'Do schools kill creativity? | Sir Ken Robinson | TED',
-  channel: 'TED',
-  uploadDate: '2007-01-07',
-  durationSeconds: 100,
-  language: 'pt-BR',
-  kind: 'manual',
-  segments: everyFiveSeconds(95),
-  isOriginalFallback: false,
-};
+const BASE: Transcript = aTranscript({ segments: everyFiveSeconds(95) });
 
 function headerOf(text: string): string[] {
   return text.split('\n\n')[0].split('\n');

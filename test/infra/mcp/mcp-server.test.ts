@@ -13,6 +13,7 @@ import { FakeTranscriptEngine } from '../../support/fakeTranscriptEngine.js';
 import { FolderFileWriter } from '../../../src/infra/storage/folderFile-writer.js';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { silenceStderr } from '../../support/silentLog.js';
 
 async function connectedClient(): Promise<Client> {
   // No call here reaches a successful transcript, so nothing is ever written to this folder.
@@ -27,7 +28,7 @@ async function connectedClient(): Promise<Client> {
 }
 
 beforeEach(() => {
-  jest.spyOn(process.stderr, 'write').mockImplementation(() => true);
+  silenceStderr();
 });
 
 describe('McpServerFactory', () => {

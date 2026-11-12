@@ -3,18 +3,9 @@
 
 import { TranscriptFileName } from '../../../src/infra/storage/transcriptFile-name.js';
 import type { Transcript } from '../../../src/domain/transcript.js';
+import { aTranscript } from '../../support/sampleTranscript.js';
 
-const TED: Transcript = {
-  videoId: 'iG9CE55wbtY',
-  title: 'Do schools kill creativity? | Sir Ken Robinson | TED',
-  channel: 'TED',
-  uploadDate: '2007-01-07',
-  durationSeconds: 1203,
-  language: 'pt-BR',
-  kind: 'manual',
-  segments: [],
-  isOriginalFallback: false,
-};
+const TED: Transcript = aTranscript({ durationSeconds: 1203 });
 
 function nameFor(changes: Partial<Transcript>): string {
   return TranscriptFileName.for({ ...TED, ...changes });

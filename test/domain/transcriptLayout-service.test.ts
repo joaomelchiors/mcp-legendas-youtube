@@ -2,25 +2,10 @@
 // (the text of the response and the Markdown file). Each format only decides HOW to write it.
 
 import { TranscriptLayout, type LayoutBlock, type HeaderField } from '../../src/domain/transcriptLayout-service.js';
-import type { Transcript, TranscriptSegment } from '../../src/domain/transcript.js';
+import type { Transcript } from '../../src/domain/transcript.js';
+import { aTranscript, everyFiveSeconds } from '../support/sampleTranscript.js';
 
-function everyFiveSeconds(untilSecond: number): TranscriptSegment[] {
-  const segments: TranscriptSegment[] = [];
-  for (let second: number = 0; second <= untilSecond; second += 5) segments.push({ startSeconds: second, text: `s${second}` });
-  return segments;
-}
-
-const BASE: Transcript = {
-  videoId: 'iG9CE55wbtY',
-  title: 'Do schools kill creativity? | Sir Ken Robinson | TED',
-  channel: 'TED',
-  uploadDate: '2007-01-07',
-  durationSeconds: 100,
-  language: 'pt-BR',
-  kind: 'manual',
-  segments: everyFiveSeconds(95),
-  isOriginalFallback: false,
-};
+const BASE: Transcript = aTranscript({ segments: everyFiveSeconds(95) });
 
 describe('headerFields', () => {
   test('all known fields, in order, without the title', () => {
