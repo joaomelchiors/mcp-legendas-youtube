@@ -3,7 +3,7 @@
 // then the running text with the markers as subtitles "## [10% - 02:00]". Ends with one line break.
 
 import type { Transcript } from '../../domain/getTranscript-usecase.js';
-import { TranscriptLayout, type HeaderField, type LayoutBlock } from './transcript-layout.js';
+import { TranscriptLayout, type HeaderField, type LayoutBlock } from '../../domain/transcriptLayout-service.js';
 
 export class TranscriptMarkdown {
   static format(transcript: Transcript): string {

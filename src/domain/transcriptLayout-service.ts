@@ -1,10 +1,10 @@
-// WHAT goes in a transcript, shared by the two formats: the text of the response
+// Domain service. WHAT goes in a transcript, shared by the two formats: the text of the response
 // (TranscriptFormatter) and the Markdown file (TranscriptMarkdown). Each format only decides HOW to write it.
 // Time markers at 10%, 25%, 50%, 75% and 90% of the duration, each one opening the block of the
 // first segment that starts at or after its point.
 
-import type { Transcript } from '../../domain/getTranscript-usecase.js';
-import type { TranscriptSegment } from '../../domain/generics-vo.js';
+import type { Transcript } from './getTranscript-usecase.js';
+import type { TranscriptSegment } from './generics-vo.js';
 
 /** One line of the header, e.g. { label: 'Canal', value: 'TED' }. The title is not a field. */
 export interface HeaderField {

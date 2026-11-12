@@ -1,9 +1,9 @@
-// Tests for TranscriptLayout: WHAT goes in a transcript, shared by the two formats
+// Tests for TranscriptLayout (domain service): WHAT goes in a transcript, shared by the two formats
 // (the text of the response and the Markdown file). Each format only decides HOW to write it.
 
-import { TranscriptLayout, type LayoutBlock, type HeaderField } from '../../../src/infra/mcp/transcript-layout.js';
-import type { Transcript } from '../../../src/domain/getTranscript-usecase.js';
-import type { TranscriptSegment } from '../../../src/domain/generics-vo.js';
+import { TranscriptLayout, type LayoutBlock, type HeaderField } from '../../src/domain/transcriptLayout-service.js';
+import type { Transcript } from '../../src/domain/getTranscript-usecase.js';
+import type { TranscriptSegment } from '../../src/domain/generics-vo.js';
 
 function everyFiveSeconds(untilSecond: number): TranscriptSegment[] {
   const segments: TranscriptSegment[] = [];

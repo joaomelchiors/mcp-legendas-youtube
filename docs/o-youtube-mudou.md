@@ -59,7 +59,13 @@ Quase sempre, quando o YouTube muda, a equipe do yt-dlp publica uma correção e
 npm run canario
 ```
 
-Se der OK, abra uma conversa nova no Claude (o MCP reinicia e passa a usar o yt-dlp novo). Pronto.
+Se der OK, rode também o teste ponta a ponta, que pede uma legenda pelo próprio MCP (servidor, yt-dlp e YouTube reais) e confere o arquivo `.md`:
+
+```bash
+npm run e2e
+```
+
+Se os dois derem OK, abra uma conversa nova no Claude (o MCP reinicia e passa a usar o yt-dlp novo). Pronto.
 
 ## 5. Se continuar falhando
 

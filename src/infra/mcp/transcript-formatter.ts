@@ -3,7 +3,7 @@
 // then the running text with the markers as "[10% - 02:00]".
 
 import type { Transcript } from '../../domain/getTranscript-usecase.js';
-import { TranscriptLayout, type HeaderField, type LayoutBlock } from './transcript-layout.js';
+import { TranscriptLayout, type HeaderField, type LayoutBlock } from '../../domain/transcriptLayout-service.js';
 
 export class TranscriptFormatter {
   static format(transcript: Transcript): string {

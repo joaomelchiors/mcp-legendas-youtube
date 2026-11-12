@@ -221,15 +221,22 @@ npm run tipos:testes
 npm run build
 ```
 
-- `npm test`: todos os testes (Jest), sem internet e sem o yt-dlp real.
+```bash
+npm run e2e
+```
+
+- `npm test`: compila e roda todos os testes (Jest), sem internet e sem o yt-dlp real. Inclui o teste ponta a ponta sem rede ([test/e2e/stdio.e2e.test.ts](test/e2e/stdio.e2e.test.ts)): sobe o servidor de verdade (`node dist/index.js`) e conversa com ele pelo stdio, como o Claude faz.
 - `npm run test:cobertura`: os testes com o relatório de cobertura.
 - `npm run tipos:testes`: confere os tipos dos testes.
 - `npm run build`: compila para `dist/`.
 - `npm run auditoria`: `npm audit` só do que o MCP executa (sem as ferramentas de teste).
+- `npm run e2e`: o teste ponta a ponta **com rede** ([test/e2e/youtube.rede.test.ts](test/e2e/youtube.rede.test.ts)): servidor, yt-dlp e YouTube reais. Pede a legenda `pt-BR` do vídeo do TED e confere a resposta e o `.md` salvo numa pasta temporária. Precisa do yt-dlp instalado (`npm run instalar`) e fica fora do `npm test`.
+
+**Diagrama da arquitetura:** [docs/arquitetura.excalidraw](docs/arquitetura.excalidraw), com as camadas, quem depende de quem, o fluxo de uma chamada arquivo por arquivo e a inversão de dependência. Abra em [excalidraw.com](https://excalidraw.com) (menu, Abrir) ou no plugin Excalidraw do Obsidian. Seta contínua é "depende de", seta tracejada com triângulo vazado é "implementa" (inversão de dependência) e seta pontilhada é dado em tempo de execução.
 
 Organização do código (`src/`):
 
-- `domain/`: as regras (que legenda escolher, os erros), sem depender do yt-dlp;
+- `domain/`: as regras (que legenda escolher, o que vai na legenda, os erros), sem depender do yt-dlp;
 - `infra/engine/`: o yt-dlp (argumentos, leitura das saídas, legenda VTT);
 - `infra/mcp/`: a ferramenta, o servidor MCP e os textos da resposta;
 - `infra/storage/`: o arquivo `.md` salvo;
