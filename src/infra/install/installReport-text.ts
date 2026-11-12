@@ -1,9 +1,10 @@
-// What the installer shows at the end of "npm run instalar": where yt-dlp is and the registration command,
+// What the installer shows at the end of "npm run instalar": where yt-dlp is and the two registration commands,
 // or why the installation did not finish (a sentence per error code, plus the detail).
 
 import type { Result } from '../../domain/shared/result.js';
 import { ErrorCode } from '../../domain/shared/errorCode.js';
 import type { InstallReport } from './ytDlp-installer.js';
+import type { RegistrationCommands } from './registration-command.js';
 
 export class InstallReportText {
   private static readonly UNEXPECTED: string = 'Erro inesperado no instalador.';
@@ -21,14 +22,21 @@ export class InstallReportText {
     [ErrorCode.UNEXPECTED]: InstallReportText.UNEXPECTED,
   };
 
-  static success(report: InstallReport, registrationCommand: string): string {
+  static success(report: InstallReport, commands: RegistrationCommands): string {
     const how: string = report.downloaded ? 'baixado do GitHub oficial' : 'já estava instalado';
     return [
       `yt-dlp ${report.version} pronto em ${report.path}`,
       `(${how}; checksum conferido)`,
       '',
-      'Para registrar o MCP no Claude Code, rode:',
-      `  ${registrationCommand}`,
+      'Para registrar o MCP no Claude Code, escolha UM dos comandos:',
+      '',
+      '  Em qualquer pasta onde abrir o Claude (recomendado):',
+      `    ${commands.user}`,
+      '',
+      '  Só em uma pasta (rode o comando dentro dela):',
+      `    ${commands.local}`,
+      '',
+      'Depois, abra uma conversa nova no Claude.',
       '',
     ].join('\n');
   }

@@ -2,21 +2,32 @@
 
 import { InstallReportText } from '../../../src/infra/install/installReport-text.js';
 import type { InstallReport } from '../../../src/infra/install/ytDlp-installer.js';
+import type { RegistrationCommands } from '../../../src/infra/install/registration-command.js';
 import { Result } from '../../../src/domain/shared/result.js';
 import { ErrorCode } from '../../../src/domain/shared/errorCode.js';
 
-const COMMAND: string = 'claude mcp add --scope user mcp-legendas-youtube -- node "C:\\mcp\\dist\\index.js"';
+const COMMANDS: RegistrationCommands = {
+  user: 'claude mcp add --scope user mcp-legendas-youtube -- node "C:\\mcp\\dist\\index.js"',
+  local: 'claude mcp add --scope local mcp-legendas-youtube -- node "C:\\mcp\\dist\\index.js"',
+};
 
 describe('InstallReportText.success', () => {
-  test('downloaded now: version, path, checksum checked, and the registration command', () => {
+  test('downloaded now: version, path, checksum checked, and the two registration commands to choose from', () => {
     const report: InstallReport = { path: 'C:\\Users\\joao\\.mcp-legendas-youtube\\yt-dlp.exe', version: '2026.10.26', downloaded: true };
-    expect(InstallReportText.success(report, COMMAND)).toBe(
+    expect(InstallReportText.success(report, COMMANDS)).toBe(
       [
         'yt-dlp 2026.10.26 pronto em C:\\Users\\joao\\.mcp-legendas-youtube\\yt-dlp.exe',
         '(baixado do GitHub oficial; checksum conferido)',
         '',
-        'Para registrar o MCP no Claude Code, rode:',
-        `  ${COMMAND}`,
+        'Para registrar o MCP no Claude Code, escolha UM dos comandos:',
+        '',
+        '  Em qualquer pasta onde abrir o Claude (recomendado):',
+        `    ${COMMANDS.user}`,
+        '',
+        '  Só em uma pasta (rode o comando dentro dela):',
+        `    ${COMMANDS.local}`,
+        '',
+        'Depois, abra uma conversa nova no Claude.',
         '',
       ].join('\n'),
     );
@@ -24,7 +35,7 @@ describe('InstallReportText.success', () => {
 
   test('already installed: says it was not downloaded again', () => {
     const report: InstallReport = { path: 'x', version: '2026.10.26', downloaded: false };
-    expect(InstallReportText.success(report, COMMAND)).toContain('(já estava instalado; checksum conferido)');
+    expect(InstallReportText.success(report, COMMANDS)).toContain('(já estava instalado; checksum conferido)');
   });
 });
 

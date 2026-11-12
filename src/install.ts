@@ -10,7 +10,7 @@ import { NodeCommandRunner } from './infra/engine/command-runner.js';
 import { YtDlpExecutableLocator } from './infra/engine/ytDlpExecutable-locator.js';
 import { FetchDownloader } from './infra/install/fetch-downloader.js';
 import { InstallReportText } from './infra/install/installReport-text.js';
-import { RegistrationCommand } from './infra/install/registration-command.js';
+import { RegistrationCommand, type RegistrationCommands } from './infra/install/registration-command.js';
 import { YtDlpInstaller, type InstallReport } from './infra/install/ytDlp-installer.js';
 
 /** yt-dlp.exe has about 18 MB; two minutes is plenty even on a slow connection. */
@@ -49,7 +49,11 @@ async function start(): Promise<void> {
   }
 
   const serverPath: string = fileURLToPath(new URL('./index.js', import.meta.url));
-  process.stdout.write(InstallReportText.success(installReturn.instance, RegistrationCommand.for(serverPath)));
+  const commands: RegistrationCommands = {
+    user: RegistrationCommand.for(serverPath, 'user'),
+    local: RegistrationCommand.for(serverPath, 'local'),
+  };
+  process.stdout.write(InstallReportText.success(installReturn.instance, commands));
 }
 
 start().catch((error: unknown) => {

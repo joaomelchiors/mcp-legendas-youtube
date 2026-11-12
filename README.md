@@ -31,6 +31,21 @@ Quem busca a legenda é o [yt-dlp](https://github.com/yt-dlp/yt-dlp), um program
 
 ## Instalação
 
+Antes de começar, decida três coisas:
+
+1. **Em qual pasta fixa** o projeto vai ficar. O registro no Claude aponta para ela.
+2. **O escopo do registro**: `user` (recomendado, o MCP funciona em qualquer pasta onde você abrir o Claude) ou `local` (só em uma pasta; nesse caso, qual).
+3. **Onde salvar as legendas**: na pasta `legendas/` de onde o Claude for aberto (o padrão), ou numa pasta fixa (`LEGENDAS_DIR`).
+
+### Instalando com a ajuda do Claude
+
+Se você passar o link deste repositório para o Claude (ou outro assistente) e pedir que ele instale, as instruções abaixo são para ele.
+
+> **Para o assistente que vai instalar:** antes de executar qualquer comando, **pergunte ao usuário** as três decisões acima (pasta, escopo e pasta das legendas). Não escolha por ele, nem use o padrão do `claude mcp add` sem perguntar.
+> Depois, siga os passos 1 a 3 desta seção, usando o comando de registro do escopo escolhido (o instalador mostra os dois).
+> Regras: não coloque o yt-dlp no PATH; não use cookies, login nem conta do YouTube; não contorne bloqueios. Se o checksum não conferir, pare e avise.
+> No fim, avise que é preciso **abrir uma conversa nova** no Claude para o MCP aparecer.
+
 ### 1. Baixe o projeto
 
 O repositório é público: o `git clone` não pede login.
@@ -43,7 +58,7 @@ git clone https://github.com/joaomelchiors/mcp-legendas-youtube.git
 cd mcp-legendas-youtube
 ```
 
-Escolha uma pasta fixa: o registro no Claude aponta para ela. Se mover a pasta depois, remova e registre de novo.
+Rode o `git clone` dentro da pasta fixa que você escolheu. Se mover a pasta depois, remova o registro e registre de novo.
 
 **Sem GitHub:** copie a pasta do projeto **sem** `node_modules/`, `dist/`, `coverage/`, `canario/` e `legendas/`, e siga daqui.
 
@@ -62,7 +77,7 @@ Ele faz, em ordem:
 3. baixa do **GitHub oficial do yt-dlp** a versão fixa do projeto e a lista de checksums dessa versão;
 4. **confere o checksum** e só então grava o yt-dlp. Se não conferir, descarta o arquivo e não instala nada;
 5. roda o yt-dlp com `--version` para confirmar;
-6. mostra o **comando de registro** já com o caminho completo.
+6. mostra os **dois comandos de registro** (`user` e `local`), já com o caminho completo.
 
 O yt-dlp fica **só nessa pasta privada**. Ele não vai para o PATH nem fica disponível para outros programas.
 
@@ -70,13 +85,22 @@ Se o yt-dlp certo já estiver na pasta, nada é baixado de novo.
 
 ### 3. Registre no Claude Code
 
-Copie o comando que o instalador mostrou. Ele tem este formato:
+O instalador mostra **dois comandos**. Copie **um só**, o do escopo que você escolheu:
+
+| Escopo | Onde o MCP aparece | Onde rodar o comando |
+| --- | --- | --- |
+| `user` (recomendado) | em qualquer pasta onde você abrir o Claude | em qualquer lugar |
+| `local` | só em uma pasta | **dentro** dessa pasta |
 
 ```bash
 claude mcp add --scope user mcp-legendas-youtube -- node "<pasta do projeto>/dist/index.js"
 ```
 
-`--scope user` registra para o seu usuário: o MCP funciona em qualquer pasta onde você abrir o Claude. Depois, **abra uma conversa nova** no Claude.
+```bash
+claude mcp add --scope local mcp-legendas-youtube -- node "<pasta do projeto>/dist/index.js"
+```
+
+Se não disser o escopo, o `claude mcp add` usa `local`. Depois de registrar, **abra uma conversa nova** no Claude.
 
 **Variáveis opcionais** entram com `-e`, **depois do nome e logo antes do `--`**:
 
@@ -87,10 +111,16 @@ claude mcp add --scope user mcp-legendas-youtube -- node "<pasta do projeto>/dis
 claude mcp add --scope user mcp-legendas-youtube -e LEGENDAS_DIR="<pasta>" -- node "<pasta do projeto>/dist/index.js"
 ```
 
-Para mudar o registro depois, remova e registre de novo:
+Para mudar o registro depois, remova e registre de novo (use o escopo com que registrou):
 
 ```bash
 claude mcp remove --scope user mcp-legendas-youtube
+```
+
+Para ver se já existe um registro, e com qual escopo:
+
+```bash
+claude mcp get mcp-legendas-youtube
 ```
 
 ## Como usar
